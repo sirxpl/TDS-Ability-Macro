@@ -130,15 +130,22 @@ ApplyKeybinds(*) {
 }
 
 ToggleField(row, *) {
-    global statusText, running
-    if !running
-        return
+    global statusText, running, macroRows
     row.enabled := !row.enabled
-    if row.enabled {
+    if (row.enabled && running)
         row.nextTick := A_TickCount + row.intervalMs
-        statusText.Text := "Status: RUNNING — field enabled (trigger: " row.trigger.Value ")"
+
+    if running {
+        statusText.Text := row.enabled
+            ? "Status: RUNNING — field enabled"
+            : "Status: RUNNING — field paused"
     } else {
-        statusText.Text := "Status: RUNNING — field paused (trigger: " row.trigger.Value ")"
+        enabledCount := 0
+        for field in macroRows {
+            if field.enabled
+                enabledCount += 1
+        }
+        statusText.Text := "Status: STOPPED — " enabledCount "/" macroRows.Length " fields enabled; press Start All"
     }
 }
 
@@ -184,6 +191,7 @@ RemoveField(rowToRemove, *) {
         }
     }
     RefreshLayout()
+    ApplyKeybinds()
 }
 
 RefreshLayout() {
@@ -205,6 +213,7 @@ RefreshLayout() {
             row.unit.Visible := true
             row.remove.Visible := true
         } else {
+            row.trigger.Visible := false
             row.key.Visible := false
             row.interval.Visible := false
             row.unit.Visible := false
@@ -251,10 +260,13 @@ StartMacro(*) {
     }
     tickCount := 0
     tickText.Text := "Key presses: 0"
-    for row in macroRows
-        row.enabled := true
     running := true
-    statusText.Text := "Status: RUNNING — all fields active"
+    activeCount := 0
+    for row in macroRows {
+        if row.enabled
+            activeCount += 1
+    }
+    statusText.Text := "Status: RUNNING — " activeCount "/" macroRows.Length " fields active"
     SetTimer(ProcessMacros, 10)
 }
 
