@@ -2,23 +2,17 @@
 
 A small AutoHotkey v2 project for prototyping timed actions for personal testing.
 
-## First test: repeating timer
+## GUI timer prototype
 
 1. Install **AutoHotkey v2**.
 2. Download `TDS-Ability-Macro.ahk` from this repository.
-3. Double-click the file to run it.
-4. Press **F6** to start the timer. A tooltip appears every 5 seconds.
-5. Press **F6** again to stop the timer.
-6. Press **F8** to exit the script.
+3. Double-click the file to launch the desktop window.
+4. Choose an interval (1, 5, 10, or 30 seconds).
+5. Click **Start** to run the timer or **Stop** to stop it.
+6. Press **F6** to toggle the timer, or **F8** to exit the script.
 
-## Change the interval
+The window shows whether the timer is running, the number of test ticks, and the last tick time. The timer begins counting after the selected interval.
 
-Open the `.ahk` file and change:
+## Current scope
 
-```ahk
-intervalMs := 5000
-```
-
-The interval is in milliseconds: `1000` = 1 second, `5000` = 5 seconds, `10000` = 10 seconds.
-
-This first version only tests the timer and does not send keyboard or mouse input. Add and test input actions separately, with the game window focused only when intended.
+This is a GUI and timer test only. It does **not** press keyboard keys or click the mouse in the game yet. Future input automation should be tested carefully, with a clear stop shortcut, and used only where it complies with the game/platform rules.
