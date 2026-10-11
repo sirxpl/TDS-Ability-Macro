@@ -8,6 +8,7 @@
 
 running := false
 tickCount := 0
+registeredHotkeys := []
 macroRows := []
 fieldScroll := 0
 visibleRows := 4
@@ -20,25 +21,34 @@ keyOptions := ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","
     ,"Space","Enter","Tab","Escape","Backspace","Delete","Insert","Home","End","PgUp","PgDn","Up","Down","Left","Right"
     ,"F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"]
 
-mainGui := Gui("+MinSize540x480", "TDS Ability Macro")
+mainGui := Gui("+MinSize760x520", "TDS Ability Macro")
 mainGui.BackColor := "1E1E2E"
 mainGui.SetFont("s10 cF0F0F0", "Segoe UI")
 mainGui.AddText("x20 y18 w500 h28 +0x200", "TDS ABILITY MACRO")
 mainGui.SetFont("s9 cB8C0D9", "Segoe UI")
-mainGui.AddText("x20 y48 w500 h22", "Add independent repeating-key fields")
+mainGui.AddText("x20 y48 w700 h22", "Custom global shortcuts + per-field triggers and repeating keys")
 
-statusText := mainGui.AddText("x20 y78 w500 h22 +0x200", "Status: STOPPED")
-tickText := mainGui.AddText("x20 y101 w500 h20", "Key presses: 0")
+statusText := mainGui.AddText("x20 y78 w700 h22 +0x200", "Status: STOPPED")
+tickText := mainGui.AddText("x20 y101 w700 h20", "Key presses: 0")
 mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-mainGui.AddText("x20 y133 w145 h20", "Key / SendInput")
-mainGui.AddText("x180 y133 w80 h20", "Interval")
-mainGui.AddText("x270 y133 w140 h20", "Time unit")
+mainGui.AddText("x20 y128 w100 h20", "Start/Stop")
+mainGui.AddText("x135 y128 w100 h20", "Exit")
+mainGui.AddText("x250 y128 w100 h20", "Field trigger")
+mainGui.AddText("x365 y128 w120 h20", "Repeating key")
+mainGui.AddText("x495 y128 w75 h20", "Interval")
+mainGui.AddText("x580 y128 w120 h20", "Time unit")
+mainGui.SetFont("s9 c202030", "Segoe UI")
+startHotkeyEdit := mainGui.AddEdit("x20 y148 w100 h26", "F6")
+exitHotkeyEdit := mainGui.AddEdit("x135 y148 w100 h26", "F8")
+mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
+applyHotkeysButton := mainGui.AddButton("x585 y180 w115 h28", "Apply Keybinds")
+applyHotkeysButton.OnEvent("Click", ApplyKeybinds)
 
-addButton := mainGui.AddButton("x20 y350 w145 h32", "+ Add Field")
-scrollUpButton := mainGui.AddButton("x175 y350 w70 h32", "Up")
-scrollDownButton := mainGui.AddButton("x250 y350 w85 h32", "Down")
-startButton := mainGui.AddButton("x345 y350 w75 h32", "Start")
-stopButton := mainGui.AddButton("x430 y350 w70 h32", "Stop")
+addButton := mainGui.AddButton("x20 y390 w145 h32", "+ Add Field")
+scrollUpButton := mainGui.AddButton("x175 y390 w70 h32", "Up")
+scrollDownButton := mainGui.AddButton("x250 y390 w85 h32", "Down")
+startButton := mainGui.AddButton("x345 y390 w100 h32", "Start All")
+stopButton := mainGui.AddButton("x455 y390 w100 h32", "Stop All")
 addButton.OnEvent("Click", AddField)
 scrollUpButton.OnEvent("Click", (*) => ScrollFields(-1))
 scrollDownButton.OnEvent("Click", (*) => ScrollFields(1))
@@ -46,14 +56,12 @@ startButton.OnEvent("Click", StartMacro)
 stopButton.OnEvent("Click", StopMacro)
 
 mainGui.SetFont("s8 cB8C0D9", "Segoe UI")
-infoText1 := mainGui.AddText("x20 y392 w500 h20", "F6 = toggle all fields  •  F8 = quit. Mouse wheel or Up/Down scrolls fields.")
-infoText2 := mainGui.AddText("x20 y414 w500 h32", "Type a key or SendInput text, e.g. q, {F1}, or Hello. Use only where permitted.")
+infoText1 := mainGui.AddText("x20 y432 w700 h20", "Global shortcuts default to F6 (Start/Stop) and F8 (Exit). Field triggers toggle each field on/off.")
+infoText2 := mainGui.AddText("x20 y454 w700 h36", "Hotkeys use AutoHotkey syntax: q, F1, ^q (Ctrl+Q), !q (Alt+Q), +q (Shift+Q). Duplicate bindings are blocked.")
 
 AddField()
-mainGui.Show("w540 h480")
-
-F6::ToggleMacro()
-F8::ExitApp
+ApplyKeybinds()
+mainGui.Show("w760 h520")
 
 ; Scroll the field list with the mouse wheel while the GUI is active.
 OnMessage(0x020A, HandleMouseWheel)
@@ -67,6 +75,71 @@ HandleMouseWheel(wParam, lParam, msg, hwnd) {
         ScrollFields(-1)
 }
 
+
+ApplyKeybinds(*) {
+    global macroRows, startHotkeyEdit, exitHotkeyEdit, registeredHotkeys
+    startKey := Trim(startHotkeyEdit.Value)
+    exitKey := Trim(exitHotkeyEdit.Value)
+    if (startKey = "" || exitKey = "") {
+        MsgBox("Set both global shortcuts before applying.", "Missing keybind", "Icon!")
+        return false
+    }
+    seen := Map()
+    if (StrLower(startKey) = StrLower(exitKey)) {
+        MsgBox("Start/Stop and Exit cannot use the same keybind.", "Duplicate keybind", "Icon!")
+        return false
+    }
+    seen[StrLower(startKey)] := "Start/Stop"
+    seen[StrLower(exitKey)] := "Exit"
+    for index, row in macroRows {
+        trigger := Trim(row.trigger.Value)
+        if (trigger = "")
+            continue
+        keyId := StrLower(trigger)
+        if seen.Has(keyId) {
+            MsgBox("Field " index " uses '" trigger "', which conflicts with " seen[keyId] ". Give each trigger a unique keybind.", "Keybind conflict", "Icon!")
+            return false
+        }
+        seen[keyId] := "Field " index
+    }
+    for oldKey in registeredHotkeys {
+        try Hotkey(oldKey, "Off")
+    }
+    registeredHotkeys := []
+    try {
+        Hotkey(startKey, ToggleMacro, "On")
+        registeredHotkeys.Push(startKey)
+        Hotkey(exitKey, ExitApp, "On")
+        registeredHotkeys.Push(exitKey)
+        for index, row in macroRows {
+            trigger := Trim(row.trigger.Value)
+            if (trigger = "")
+                continue
+            Hotkey(trigger, (*) => ToggleField(row), "On")
+            registeredHotkeys.Push(trigger)
+        }
+    } catch as err {
+        for oldKey in registeredHotkeys {
+            try Hotkey(oldKey, "Off")
+        }
+        registeredHotkeys := []
+        MsgBox("Could not register a keybind. Check syntax like q, F1, ^q, !q, or +q." Chr(10) Chr(10) err.Message, "Invalid keybind", "Icon!")
+        return false
+    }
+    return true
+}
+
+ToggleField(row) {
+    global statusText
+    row.enabled := !row.enabled
+    if row.enabled {
+        row.nextTick := A_TickCount + row.intervalMs
+        statusText.Text := "Status: RUNNING — field enabled"
+    } else {
+        statusText.Text := "Status: RUNNING — field paused"
+    }
+}
+
 AddField(*) {
     global macroRows, mainGui
     if (macroRows.Length >= 8) {
@@ -76,14 +149,14 @@ AddField(*) {
 
     rowIndex := macroRows.Length + 1
     row := {}
-    y := 156
-    ; Editable key field: accepts a key name, symbol, or SendInput sequence.
+    row.enabled := true
     mainGui.SetFont("s9 c202030", "Segoe UI")
-    row.key := mainGui.AddEdit("x20 y156 w145 h27", "q")
-    row.interval := mainGui.AddEdit("x180 y156 w80 h27", "5")
-    row.unit := mainGui.AddDropDownList("x270 y156 w140 Choose1", ["Seconds", "Milliseconds"])
+    row.trigger := mainGui.AddEdit("x250 y185 w100 h27", rowIndex = 1 ? "q" : "")
+    row.key := mainGui.AddEdit("x365 y185 w120 h27", "1")
+    row.interval := mainGui.AddEdit("x495 y185 w75 h27", "5")
+    row.unit := mainGui.AddDropDownList("x580 y185 w120 Choose1", ["Seconds", "Milliseconds"])
     mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-    row.remove := mainGui.AddButton("x420 y156 w80 h25", "Remove")
+    row.remove := mainGui.AddButton("x705 y185 w45 h27", "X")
     row.remove.OnEvent("Click", (*) => RemoveField(row))
     row.intervalMs := 5000
     row.nextTick := 0
@@ -99,6 +172,8 @@ RemoveField(rowToRemove, *) {
     }
     for index, row in macroRows {
         if (row = rowToRemove) {
+            row.trigger.Visible := false
+            row.trigger.Visible := false
             row.key.Visible := false
             row.interval.Visible := false
             row.unit.Visible := false
@@ -118,10 +193,12 @@ RefreshLayout() {
         slot := index - 1 - fieldScroll
         if (slot >= 0 && slot < visibleRows) {
             y := 156 + slot * 42
-            row.key.Move(20, y, 145, 27)
-            row.interval.Move(180, y, 80, 27)
-            row.unit.Move(270, y, 140, 27)
-            row.remove.Move(420, y, 80, 27)
+            row.trigger.Move(250, y, 100, 27)
+            row.key.Move(365, y, 120, 27)
+            row.interval.Move(495, y, 75, 27)
+            row.unit.Move(580, y, 120, 27)
+            row.remove.Move(705, y, 45, 27)
+            row.trigger.Visible := true
             row.key.Visible := true
             row.interval.Visible := true
             row.unit.Visible := true
@@ -143,6 +220,8 @@ ScrollFields(direction, *) {
 
 StartMacro(*) {
     global running, macroRows, statusText, tickCount, tickText
+    if !ApplyKeybinds()
+        return
     for index, row in macroRows {
         if (Trim(row.key.Value) = "") {
             MsgBox("Field " index ": type a key or SendInput sequence.", "Missing key", "Icon!")
@@ -171,14 +250,18 @@ StartMacro(*) {
     }
     tickCount := 0
     tickText.Text := "Key presses: 0"
+    for row in macroRows
+        row.enabled := true
     running := true
     statusText.Text := "Status: RUNNING — all fields active"
     SetTimer(ProcessMacros, 10)
 }
 
 StopMacro(*) {
-    global running, statusText
+    global running, statusText, macroRows
     running := false
+    for row in macroRows
+        row.enabled := false
     SetTimer(ProcessMacros, 0)
     statusText.Text := "Status: STOPPED"
 }
@@ -197,7 +280,7 @@ ProcessMacros() {
         return
     now := A_TickCount
     for index, row in macroRows {
-        if (now >= row.nextTick) {
+        if (row.enabled && now >= row.nextTick) {
             SendInput(row.key.Value)
             tickCount += 1
             tickText.Text := "Key presses: " tickCount
