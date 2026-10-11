@@ -2,22 +2,17 @@
 
 A small AutoHotkey v2 project for prototyping timed keyboard actions.
 
-## GUI: configurable repeating key
+## GUI: multiple repeating-key fields
 
 1. Install **AutoHotkey v2**.
 2. Download [TDS-Ability-Macro.ahk](TDS-Ability-Macro.ahk) and double-click it to launch the desktop window.
-3. Enter the repeat interval in the **Repeat interval** field.
-4. Choose **Seconds** or **Milliseconds** from the **Time unit** dropdown:
+3. Use each row's **Hotkey** dropdown to choose a key, enter an interval, and choose **Seconds** or **Milliseconds**.
    - Seconds: **0.1 to 3600** (decimals supported, e.g. 0.5).
    - Milliseconds: **10 to 3,600,000** (e.g. 250 for a quarter second).
-5. Set **Key to repeat** to one key: A-Z, 0-9, F1-F12, Space, Enter, or Tab.
-6. Click **Start**. The selected key is sent at each interval.
-7. Click **Stop** or press **F6** to toggle start/stop. Press **F8** to exit.
+4. Click **+ Add Fields** to add up to 8 rows. Each row repeats its own selected key independently.
+5. Click **Start All** to start every row, or **Stop All** / **F6** to stop or restart. Press **F8** to exit.
 
-The window displays the running status, number of key presses, and last press time. After starting, focus the intended application before the first press. The macro sends input to whichever window is active when the timer fires, so double-check the focused window. Very short timer intervals can be affected by Windows and AutoHotkey timer scheduling.
+The hotkey dropdown includes letters, numbers, punctuation (including backtick and backslash), function keys, and common navigation keys. The window displays the total number of key presses. Focus the intended application before starting because input goes to whichever window is active when a timer fires.
 
-## Notes
+Very short timer intervals can be affected by Windows and AutoHotkey scheduling. Use automation only where allowed by the game and platform rules, and test with a harmless key first.
 
-- This prototype repeats one key only; it does not click the mouse or support key combinations.
-- Keep the stop shortcut handy and test with a harmless key first.
-- Use automation only where allowed by the game and platform rules.
