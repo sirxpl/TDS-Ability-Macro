@@ -76,6 +76,7 @@ AddField(*) {
 
     rowIndex := macroRows.Length + 1
     row := {}
+    y := 156
     ; Editable key field: accepts a key name, symbol, or SendInput sequence.
     mainGui.SetFont("s9 c202030", "Segoe UI")
     row.key := mainGui.AddEdit("x20 y156 w145 h27", "q")
