@@ -41,7 +41,7 @@ mainGui.SetFont("s9 c202030", "Segoe UI")
 startHotkeyEdit := mainGui.AddEdit("x20 y148 w100 h26", "F6")
 exitHotkeyEdit := mainGui.AddEdit("x135 y148 w100 h26", "F8")
 mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-applyHotkeysButton := mainGui.AddButton("x585 y180 w115 h28", "Apply Keybinds")
+applyHotkeysButton := mainGui.AddButton("x585 y148 w115 h26", "Apply Keybinds")
 applyHotkeysButton.OnEvent("Click", ApplyKeybinds)
 
 addButton := mainGui.AddButton("x20 y390 w145 h32", "+ Add Field")
@@ -115,7 +115,7 @@ ApplyKeybinds(*) {
             trigger := Trim(row.trigger.Value)
             if (trigger = "")
                 continue
-            Hotkey(trigger, (*) => ToggleField(row), "On")
+            Hotkey(trigger, MakeFieldCallback(row), "On")
             registeredHotkeys.Push(trigger)
         }
     } catch as err {
@@ -129,8 +129,14 @@ ApplyKeybinds(*) {
     return true
 }
 
+MakeFieldCallback(row) {
+    return (*) => ToggleField(row)
+}
+
 ToggleField(row) {
-    global statusText
+    global statusText, running
+    if !running
+        return
     row.enabled := !row.enabled
     if row.enabled {
         row.nextTick := A_TickCount + row.intervalMs
@@ -151,12 +157,12 @@ AddField(*) {
     row := {}
     row.enabled := true
     mainGui.SetFont("s9 c202030", "Segoe UI")
-    row.trigger := mainGui.AddEdit("x250 y185 w100 h27", rowIndex = 1 ? "q" : "")
-    row.key := mainGui.AddEdit("x365 y185 w120 h27", "1")
-    row.interval := mainGui.AddEdit("x495 y185 w75 h27", "5")
-    row.unit := mainGui.AddDropDownList("x580 y185 w120 Choose1", ["Seconds", "Milliseconds"])
+    row.trigger := mainGui.AddEdit("x250 y215 w100 h27", rowIndex = 1 ? "q" : "")
+    row.key := mainGui.AddEdit("x365 y215 w120 h27", "1")
+    row.interval := mainGui.AddEdit("x495 y215 w75 h27", "5")
+    row.unit := mainGui.AddDropDownList("x580 y215 w120 Choose1", ["Seconds", "Milliseconds"])
     mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-    row.remove := mainGui.AddButton("x705 y185 w45 h27", "X")
+    row.remove := mainGui.AddButton("x705 y215 w45 h27", "X")
     row.remove.OnEvent("Click", (*) => RemoveField(row))
     row.intervalMs := 5000
     row.nextTick := 0
@@ -172,7 +178,6 @@ RemoveField(rowToRemove, *) {
     }
     for index, row in macroRows {
         if (row = rowToRemove) {
-            row.trigger.Visible := false
             row.trigger.Visible := false
             row.key.Visible := false
             row.interval.Visible := false
@@ -192,7 +197,7 @@ RefreshLayout() {
     for index, row in macroRows {
         slot := index - 1 - fieldScroll
         if (slot >= 0 && slot < visibleRows) {
-            y := 156 + slot * 42
+            y := 215 + slot * 36
             row.trigger.Move(250, y, 100, 27)
             row.key.Move(365, y, 120, 27)
             row.interval.Move(495, y, 75, 27)
