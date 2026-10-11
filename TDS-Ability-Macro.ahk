@@ -12,7 +12,7 @@ macroRows := []
 
 keyOptions := ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
     ,"0","1","2","3","4","5","6","7","8","9"
-    ,"Backtick (`)","-","=","[","]","\\",";","' ",",",".","/"
+    ,"Backtick (`)","-","=","[","]","Backslash (\\)",";","'",",",".","/"
     ,"Space","Enter","Tab","Escape","Backspace","Delete","Insert","Home","End","PgUp","PgDn","Up","Down","Left","Right"
     ,"F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"]
 
@@ -38,8 +38,8 @@ startButton.OnEvent("Click", StartMacro)
 stopButton.OnEvent("Click", StopMacro)
 
 mainGui.SetFont("s8 cB8C0D9", "Segoe UI")
-mainGui.AddText("x20 y220 w500 h36", "F6 = toggle all fields  •  F8 = quit. Each row repeats independently.")
-mainGui.AddText("x20 y254 w500 h32", "Seconds: 0.1–3600 | Milliseconds: 10–3600000. Focus the intended app before starting.")
+infoText1 := mainGui.AddText("x20 y220 w500 h20", "F6 = toggle all fields  •  F8 = quit. Each row repeats independently.")
+infoText2 := mainGui.AddText("x20 y242 w500 h32", "Seconds: 0.1–3600 | Milliseconds: 10–3600000. Focus the intended app before starting.")
 
 AddField()
 mainGui.Show("w540 h300")
@@ -48,7 +48,7 @@ F6::ToggleMacro()
 F8::ExitApp
 
 AddField(*) {
-    global macroRows, keyOptions, addButton, startButton, stopButton, mainGui
+    global macroRows, keyOptions, mainGui
     if (macroRows.Length >= 8) {
         MsgBox("You can add up to 8 macro fields.", "Field limit", "Icon!")
         return
@@ -88,7 +88,7 @@ RemoveField(rowToRemove, *) {
 }
 
 RefreshLayout() {
-    global macroRows, addButton, startButton, stopButton, mainGui
+    global macroRows, addButton, startButton, stopButton, infoText1, infoText2, mainGui
     for index, row in macroRows {
         y := 156 + (index - 1) * 42
         row.key.Move(20, y, 145, 27)
@@ -104,9 +104,10 @@ RefreshLayout() {
     addButton.Move(20, buttonsY, 160, 32)
     startButton.Move(190, buttonsY, 150, 32)
     stopButton.Move(350, buttonsY, 150, 32)
-    mainGui["Static6"].Move(20, buttonsY + 40, 500, 20)
-    mainGui["Static7"].Move(20, buttonsY + 62, 500, 32)
-    mainGui.Show("w540 h" (buttonsY + 105))
+    infoText1.Move(20, buttonsY + 40, 500, 20)
+    infoText2.Move(20, buttonsY + 62, 500, 32)
+    windowHeight := buttonsY + 105
+    mainGui.Show("w540 h" windowHeight)
 }
 
 StartMacro(*) {
@@ -174,7 +175,7 @@ ProcessMacros() {
 KeyNameFor(label) {
     if (label = "Backtick (`)")
         return "`"
-    if (label = "' ")
-        return "'"
+    if (label = "Backslash (\\)")
+        return "\\"
     return label
 }
