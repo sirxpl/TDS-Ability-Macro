@@ -6,10 +6,10 @@
 ; F8: Exit the script
 ; Use only where permitted by the game/platform rules.
 
-global running := false
-global intervalMs := 5000
-global repeatKey := "Q"
-global tickCount := 0
+running := false
+intervalMs := 5000
+repeatKey := "Q"
+tickCount := 0
 
 mainGui := Gui("+MinSize460x370", "TDS Ability Macro")
 mainGui.BackColor := "1E1E2E"
@@ -19,15 +19,15 @@ mainGui.AddText("x20 y18 w400 h28 +0x200", "TDS ABILITY MACRO")
 mainGui.SetFont("s9 cB8C0D9", "Segoe UI")
 mainGui.AddText("x20 y48 w400 h24", "Configurable repeating-key prototype")
 
-global statusText := mainGui.AddText("x20 y84 w400 h26 +0x200", "Status: STOPPED")
-global tickText := mainGui.AddText("x20 y112 w400 h22", "Key presses: 0")
-global lastTickText := mainGui.AddText("x20 y134 w400 h22", "Last press: —")
+statusText := mainGui.AddText("x20 y84 w400 h26 +0x200", "Status: STOPPED")
+tickText := mainGui.AddText("x20 y112 w400 h22", "Key presses: 0")
+lastTickText := mainGui.AddText("x20 y134 w400 h22", "Last press: —")
 
 mainGui.SetFont("s10 cF0F0F0", "Segoe UI")
 mainGui.AddText("x20 y174 w180 h22", "Interval (seconds)")
-global secondsEdit := mainGui.AddEdit("x20 y198 w180 h30", "5")
+secondsEdit := mainGui.AddEdit("x20 y198 w180 h30", "5")
 mainGui.AddText("x230 y174 w180 h22", "Key to repeat")
-global keyEdit := mainGui.AddEdit("x230 y198 w180 h30", "Q")
+keyEdit := mainGui.AddEdit("x230 y198 w180 h30", "Q")
 
 startButton := mainGui.AddButton("x20 y244 w185 h34", "Start")
 stopButton := mainGui.AddButton("x220 y244 w190 h34", "Stop")
