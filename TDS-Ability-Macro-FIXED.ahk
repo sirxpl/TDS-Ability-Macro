@@ -115,7 +115,7 @@ ApplyKeybinds(*) {
             trigger := Trim(row.trigger.Value)
             if (trigger = "")
                 continue
-            Hotkey(trigger, MakeFieldCallback(row), "On")
+            Hotkey(trigger, ToggleField.Bind(row), "On")
             registeredHotkeys.Push(trigger)
         }
     } catch as err {
@@ -129,20 +129,16 @@ ApplyKeybinds(*) {
     return true
 }
 
-MakeFieldCallback(row) {
-    return (*) => ToggleField(row)
-}
-
-ToggleField(row) {
+ToggleField(row, *) {
     global statusText, running
     if !running
         return
     row.enabled := !row.enabled
     if row.enabled {
         row.nextTick := A_TickCount + row.intervalMs
-        statusText.Text := "Status: RUNNING — field enabled"
+        statusText.Text := "Status: RUNNING — field enabled (trigger: " row.trigger.Value ")";
     } else {
-        statusText.Text := "Status: RUNNING — field paused"
+        statusText.Text := "Status: RUNNING — field paused (trigger: " row.trigger.Value ")";
     }
 }
 
