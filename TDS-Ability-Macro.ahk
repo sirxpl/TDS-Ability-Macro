@@ -25,7 +25,7 @@ global lastTickText := mainGui.AddText("x20 y134 w400 h22", "Last press: —")
 
 mainGui.SetFont("s10 cF0F0F0", "Segoe UI")
 mainGui.AddText("x20 y174 w180 h22", "Interval (seconds)")
-global secondsEdit := mainGui.AddEdit("x20 y198 w180 h30 Number", "5")
+global secondsEdit := mainGui.AddEdit("x20 y198 w180 h30", "5")
 mainGui.AddText("x230 y174 w180 h22", "Key to repeat")
 global keyEdit := mainGui.AddEdit("x230 y198 w180 h30", "Q")
 
