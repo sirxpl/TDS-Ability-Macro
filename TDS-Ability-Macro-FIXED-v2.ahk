@@ -191,6 +191,7 @@ RemoveField(rowToRemove, *) {
         }
     }
     RefreshLayout()
+    ApplyKeybinds()
 }
 
 RefreshLayout() {
@@ -212,6 +213,7 @@ RefreshLayout() {
             row.unit.Visible := true
             row.remove.Visible := true
         } else {
+            row.trigger.Visible := false
             row.key.Visible := false
             row.interval.Visible := false
             row.unit.Visible := false
@@ -258,10 +260,13 @@ StartMacro(*) {
     }
     tickCount := 0
     tickText.Text := "Key presses: 0"
-    for row in macroRows
-        row.enabled := true
     running := true
-    statusText.Text := "Status: RUNNING — all fields active"
+    activeCount := 0
+    for row in macroRows {
+        if row.enabled
+            activeCount += 1
+    }
+    statusText.Text := "Status: RUNNING — " activeCount "/" macroRows.Length " fields active"
     SetTimer(ProcessMacros, 10)
 }
 
