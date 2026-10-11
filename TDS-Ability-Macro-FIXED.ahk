@@ -136,9 +136,9 @@ ToggleField(row, *) {
     row.enabled := !row.enabled
     if row.enabled {
         row.nextTick := A_TickCount + row.intervalMs
-        statusText.Text := "Status: RUNNING — field enabled (trigger: " row.trigger.Value ")";
+        statusText.Text := "Status: RUNNING — field enabled (trigger: " row.trigger.Value ")"
     } else {
-        statusText.Text := "Status: RUNNING — field paused (trigger: " row.trigger.Value ")";
+        statusText.Text := "Status: RUNNING — field paused (trigger: " row.trigger.Value ")"
     }
 }
 
