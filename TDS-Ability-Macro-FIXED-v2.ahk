@@ -31,7 +31,7 @@ mainGui.AddText("x20 y48 w700 h22", "Custom global shortcuts + per-field trigger
 statusText := mainGui.AddText("x20 y78 w700 h22 +0x200", "Status: STOPPED")
 tickText := mainGui.AddText("x20 y101 w700 h20", "Key presses: 0")
 mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-mainGui.AddText("x20 y128 w100 h20", "Start/Stop")
+mainGui.AddText("x20 y128 w215 h20", "Field / State")
 mainGui.AddText("x135 y128 w100 h20", "Exit")
 mainGui.AddText("x250 y128 w100 h20", "Field trigger")
 mainGui.AddText("x365 y128 w120 h20", "Repeating key")
@@ -56,8 +56,9 @@ startButton.OnEvent("Click", StartMacro)
 stopButton.OnEvent("Click", StopMacro)
 
 mainGui.SetFont("s8 cB8C0D9", "Segoe UI")
-infoText1 := mainGui.AddText("x20 y432 w700 h20", "Global shortcuts default to F6 (Start/Stop) and F8 (Exit). Field triggers toggle each field on/off.")
-infoText2 := mainGui.AddText("x20 y454 w700 h36", "Hotkeys use AutoHotkey syntax: q, F1, ^q (Ctrl+Q), !q (Alt+Q), +q (Shift+Q). Duplicate bindings are blocked.")
+infoText1 := mainGui.AddText("x20 y430 w700 h18", "Global shortcuts: F6 = Start/Stop, F8 = Exit. Field triggers toggle individual fields.")
+infoText2 := mainGui.AddText("x20 y450 w700 h18", "Hotkey syntax: q, F1, ^q (Ctrl+Q), !q (Alt+Q), +q (Shift+Q). Duplicate bindings are blocked.")
+infoText3 := mainGui.AddText("x20 y472 w700 h30", "NOTE: Some keys may not work while the macro is in use. Games can ignore simulated input or capture keys differently.")
 
 AddField()
 ApplyKeybinds()
@@ -134,6 +135,7 @@ ToggleField(row, *) {
     row.enabled := !row.enabled
     if (row.enabled && running)
         row.nextTick := A_TickCount + row.intervalMs
+    row.label.Text := "Field " row.number " — " (row.enabled ? "ON" : "OFF")
 
     if running {
         statusText.Text := row.enabled
@@ -158,7 +160,10 @@ AddField(*) {
 
     rowIndex := macroRows.Length + 1
     row := {}
+    row.number := rowIndex
     row.enabled := true
+    mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
+    row.label := mainGui.AddText("x20 y215 w215 h27 +0x200", "Field " rowIndex " — ON")
     mainGui.SetFont("s9 c202030", "Segoe UI")
     row.trigger := mainGui.AddEdit("x250 y215 w100 h27", rowIndex = 1 ? "q" : "")
     row.key := mainGui.AddEdit("x365 y215 w120 h27", "1")
@@ -181,6 +186,7 @@ RemoveField(rowToRemove, *) {
     }
     for index, row in macroRows {
         if (row = rowToRemove) {
+            row.label.Visible := false
             row.trigger.Visible := false
             row.key.Visible := false
             row.interval.Visible := false
@@ -199,10 +205,14 @@ RefreshLayout() {
     maxScroll := Max(0, macroRows.Length - visibleRows)
     fieldScroll := Min(fieldScroll, maxScroll)
     for index, row in macroRows {
+        row.number := index
+        row.label.Text := "Field " index " — " (row.enabled ? "ON" : "OFF")
         slot := index - 1 - fieldScroll
         if (slot >= 0 && slot < visibleRows) {
             y := 215 + slot * 36
+            row.label.Move(20, y, 215, 27)
             row.trigger.Move(250, y, 100, 27)
+            row.label.Visible := true
             row.key.Move(365, y, 120, 27)
             row.interval.Move(495, y, 75, 27)
             row.unit.Move(580, y, 120, 27)
@@ -213,6 +223,7 @@ RefreshLayout() {
             row.unit.Visible := true
             row.remove.Visible := true
         } else {
+            row.label.Visible := false
             row.trigger.Visible := false
             row.key.Visible := false
             row.interval.Visible := false
@@ -263,6 +274,7 @@ StartMacro(*) {
     running := true
     activeCount := 0
     for row in macroRows {
+        row.label.Text := "Field " row.number " — " (row.enabled ? "ON" : "OFF")
         if row.enabled
             activeCount += 1
     }
@@ -273,8 +285,10 @@ StartMacro(*) {
 StopMacro(*) {
     global running, statusText, macroRows
     running := false
-    for row in macroRows
+    for row in macroRows {
         row.enabled := false
+        row.label.Text := "Field " row.number " — OFF"
+    }
     SetTimer(ProcessMacros, 0)
     statusText.Text := "Status: STOPPED"
 }
