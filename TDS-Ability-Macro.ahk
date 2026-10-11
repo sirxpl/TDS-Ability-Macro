@@ -9,6 +9,8 @@
 running := false
 tickCount := 0
 macroRows := []
+fieldScroll := 0
+visibleRows := 4
 
 keyOptions := ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
     ,"0","1","2","3","4","5","6","7","8","9"
@@ -18,7 +20,7 @@ keyOptions := ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","
     ,"Space","Enter","Tab","Escape","Backspace","Delete","Insert","Home","End","PgUp","PgDn","Up","Down","Left","Right"
     ,"F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"]
 
-mainGui := Gui("+MinSize540x300", "TDS Ability Macro")
+mainGui := Gui("+MinSize540x480", "TDS Ability Macro")
 mainGui.BackColor := "1E1E2E"
 mainGui.SetFont("s10 cF0F0F0", "Segoe UI")
 mainGui.AddText("x20 y18 w500 h28 +0x200", "TDS ABILITY MACRO")
@@ -28,42 +30,57 @@ mainGui.AddText("x20 y48 w500 h22", "Add independent repeating-key fields")
 statusText := mainGui.AddText("x20 y78 w500 h22 +0x200", "Status: STOPPED")
 tickText := mainGui.AddText("x20 y101 w500 h20", "Key presses: 0")
 mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-mainGui.AddText("x20 y133 w145 h20", "Hotkey")
+mainGui.AddText("x20 y133 w145 h20", "Key / SendInput")
 mainGui.AddText("x180 y133 w80 h20", "Interval")
 mainGui.AddText("x270 y133 w140 h20", "Time unit")
 
-addButton := mainGui.AddButton("x20 y180 w160 h32", "+ Add Fields")
-startButton := mainGui.AddButton("x190 y180 w150 h32", "Start All")
-stopButton := mainGui.AddButton("x350 y180 w150 h32", "Stop All")
+addButton := mainGui.AddButton("x20 y350 w145 h32", "+ Add Field")
+scrollUpButton := mainGui.AddButton("x175 y350 w70 h32", "Up")
+scrollDownButton := mainGui.AddButton("x250 y350 w85 h32", "Down")
+startButton := mainGui.AddButton("x345 y350 w75 h32", "Start")
+stopButton := mainGui.AddButton("x430 y350 w70 h32", "Stop")
 addButton.OnEvent("Click", AddField)
+scrollUpButton.OnEvent("Click", (*) => ScrollFields(-1))
+scrollDownButton.OnEvent("Click", (*) => ScrollFields(1))
 startButton.OnEvent("Click", StartMacro)
 stopButton.OnEvent("Click", StopMacro)
 
 mainGui.SetFont("s8 cB8C0D9", "Segoe UI")
-infoText1 := mainGui.AddText("x20 y220 w500 h20", "F6 = toggle all fields  •  F8 = quit. Each row repeats independently.")
-infoText2 := mainGui.AddText("x20 y242 w500 h32", "Seconds: 0.1–3600 | Milliseconds: 10–3600000. Focus the intended app before starting.")
+infoText1 := mainGui.AddText("x20 y392 w500 h20", "F6 = toggle all fields  •  F8 = quit. Mouse wheel or Up/Down scrolls fields.")
+infoText2 := mainGui.AddText("x20 y414 w500 h32", "Type a key or SendInput text, e.g. q, {F1}, or Hello. Use only where permitted.")
 
 AddField()
-mainGui.Show("w540 h300")
+mainGui.Show("w540 h480")
 
 F6::ToggleMacro()
 F8::ExitApp
 
+; Scroll the field list with the mouse wheel while the GUI is active.
+OnMessage(0x020A, HandleMouseWheel)
+HandleMouseWheel(wParam, lParam, msg, hwnd) {
+    delta := (wParam >> 16) & 0xFFFF
+    if (delta >= 0x8000)
+        delta -= 0x10000
+    if (delta < 0)
+        ScrollFields(1)
+    else if (delta > 0)
+        ScrollFields(-1)
+}
+
 AddField(*) {
-    global macroRows, keyOptions, mainGui
+    global macroRows, mainGui
     if (macroRows.Length >= 8) {
         MsgBox("You can add up to 8 macro fields.", "Field limit", "Icon!")
         return
     }
 
     rowIndex := macroRows.Length + 1
-    y := 156 + (rowIndex - 1) * 42
     row := {}
-    ; Give input controls dark text on their light native backgrounds.
+    ; Editable key field: accepts a key name, symbol, or SendInput sequence.
     mainGui.SetFont("s9 c202030", "Segoe UI")
-    row.key := mainGui.AddDropDownList("x20 y" y " w145 Choose17", keyOptions)
-    row.interval := mainGui.AddEdit("x180 y" y " w80 h25", "5")
-    row.unit := mainGui.AddDropDownList("x270 y" y " w140 Choose1", ["Seconds", "Milliseconds"])
+    row.key := mainGui.AddEdit("x20 y156 w145 h27", "q")
+    row.interval := mainGui.AddEdit("x180 y156 w80 h27", "5")
+    row.unit := mainGui.AddDropDownList("x270 y156 w140 Choose1", ["Seconds", "Milliseconds"])
     mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
     row.remove := mainGui.AddButton("x420 y" y " w80 h25", "Remove")
     row.remove.OnEvent("Click", (*) => RemoveField(row))
@@ -93,31 +110,43 @@ RemoveField(rowToRemove, *) {
 }
 
 RefreshLayout() {
-    global macroRows, addButton, startButton, stopButton, infoText1, infoText2, mainGui
+    global macroRows, fieldScroll, visibleRows
+    maxScroll := Max(0, macroRows.Length - visibleRows)
+    fieldScroll := Min(fieldScroll, maxScroll)
     for index, row in macroRows {
-        y := 156 + (index - 1) * 42
-        row.key.Move(20, y, 145, 27)
-        row.interval.Move(180, y, 80, 27)
-        row.unit.Move(270, y, 140, 27)
-        row.remove.Move(420, y, 80, 27)
-        row.key.Visible := true
-        row.interval.Visible := true
-        row.unit.Visible := true
-        row.remove.Visible := true
+        slot := index - 1 - fieldScroll
+        if (slot >= 0 && slot < visibleRows) {
+            y := 156 + slot * 42
+            row.key.Move(20, y, 145, 27)
+            row.interval.Move(180, y, 80, 27)
+            row.unit.Move(270, y, 140, 27)
+            row.remove.Move(420, y, 80, 27)
+            row.key.Visible := true
+            row.interval.Visible := true
+            row.unit.Visible := true
+            row.remove.Visible := true
+        } else {
+            row.key.Visible := false
+            row.interval.Visible := false
+            row.unit.Visible := false
+            row.remove.Visible := false
+        }
     }
-    buttonsY := 180 + macroRows.Length * 42
-    addButton.Move(20, buttonsY, 160, 32)
-    startButton.Move(190, buttonsY, 150, 32)
-    stopButton.Move(350, buttonsY, 150, 32)
-    infoText1.Move(20, buttonsY + 40, 500, 20)
-    infoText2.Move(20, buttonsY + 62, 500, 32)
-    windowHeight := buttonsY + 105
-    mainGui.Show("w540 h" windowHeight)
+}
+
+ScrollFields(direction, *) {
+    global fieldScroll, macroRows, visibleRows
+    fieldScroll := Max(0, Min(fieldScroll + direction, Max(0, macroRows.Length - visibleRows)))
+    RefreshLayout()
 }
 
 StartMacro(*) {
     global running, macroRows, statusText, tickCount, tickText
     for index, row in macroRows {
+        if (Trim(row.key.Value) = "") {
+            MsgBox("Field " index ": type a key or SendInput sequence.", "Missing key", "Icon!")
+            return
+        }
         intervalText := Trim(row.interval.Value)
         if !RegExMatch(intervalText, "^\d+(?:\.\d+)?$") {
             MsgBox("Field " index ": enter a valid interval number.", "Invalid interval", "Icon!")
@@ -168,7 +197,7 @@ ProcessMacros() {
     now := A_TickCount
     for index, row in macroRows {
         if (now >= row.nextTick) {
-            SendInput(KeySequenceFor(row.key.Text))
+            SendInput(row.key.Value)
             tickCount += 1
             tickText.Text := "Key presses: " tickCount
             row.nextTick := now + row.intervalMs
