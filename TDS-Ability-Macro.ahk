@@ -165,8 +165,7 @@ ProcessMacros() {
     now := A_TickCount
     for index, row in macroRows {
         if (now >= row.nextTick) {
-            keyName := KeyNameFor(row.key.Text)
-            SendInput("{" keyName "}")
+            SendInput(KeySequenceFor(row.key.Text))
             tickCount += 1
             tickText.Text := "Key presses: " tickCount
             row.nextTick := now + row.intervalMs
@@ -177,7 +176,7 @@ ProcessMacros() {
 KeySequenceFor(label) {
     static shifted := Map(
         "< (Shift+,)", "+{,}", "> (Shift+.)", "+{.}", "? (Shift+/)", "+{/}",
-        ": (Shift+;)", "+{;}", "Double quote (Shift+')", "+{' }",
+        ": (Shift+;)", "+{;}", "Double quote (Shift+')", "+{'}",
         "{ (Shift+[)", "+{[}", "} (Shift+])", "+{]}", "| (Shift+Backslash)", "+{\\}",
         "~ (Shift+Backtick)", "+{``}", "_ (Shift+-)", "+{-}", "+ (Shift+=)", "+{=}",
         ") (Shift+0)", "+{0}", "( (Shift+9)", "+{9}", "* (Shift+8)", "+{8}",
