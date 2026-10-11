@@ -130,15 +130,22 @@ ApplyKeybinds(*) {
 }
 
 ToggleField(row, *) {
-    global statusText, running
-    if !running
-        return
+    global statusText, running, macroRows
     row.enabled := !row.enabled
-    if row.enabled {
+    if (row.enabled && running)
         row.nextTick := A_TickCount + row.intervalMs
-        statusText.Text := "Status: RUNNING — field enabled"
+
+    if running {
+        statusText.Text := row.enabled
+            ? "Status: RUNNING — field enabled"
+            : "Status: RUNNING — field paused"
     } else {
-        statusText.Text := "Status: RUNNING — field paused"
+        enabledCount := 0
+        for field in macroRows {
+            if field.enabled
+                enabledCount += 1
+        }
+        statusText.Text := "Status: STOPPED — " enabledCount "/" macroRows.Length " fields enabled; press Start All"
     }
 }
 
