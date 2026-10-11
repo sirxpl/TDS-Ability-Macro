@@ -205,6 +205,8 @@ RefreshLayout() {
     maxScroll := Max(0, macroRows.Length - visibleRows)
     fieldScroll := Min(fieldScroll, maxScroll)
     for index, row in macroRows {
+        row.number := index
+        row.label.Text := "Field " index " — " (row.enabled ? "ON" : "OFF")
         slot := index - 1 - fieldScroll
         if (slot >= 0 && slot < visibleRows) {
             y := 215 + slot * 36
