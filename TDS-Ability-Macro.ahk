@@ -12,7 +12,9 @@ macroRows := []
 
 keyOptions := ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
     ,"0","1","2","3","4","5","6","7","8","9"
-    ,"Backtick (`)","-","=","[","]","Backslash (\\)",";","'",",",".","/"
+    ,"Backtick key","-","=","[","]","Backslash key",";","'",",",".","/"
+    ,"< (Shift+,)","> (Shift+.)","? (Shift+/)",": (Shift+;)","Double quote (Shift+')","{ (Shift+[)","} (Shift+])","| (Shift+Backslash)","~ (Shift+Backtick)"
+    ,"_ (Shift+-)","+ (Shift+=)",") (Shift+0)","( (Shift+9)","* (Shift+8)","& (Shift+7)","^ (Shift+6)","% (Shift+5)","$ (Shift+4)","# (Shift+3)","@ (Shift+2)","! (Shift+1)"
     ,"Space","Enter","Tab","Escape","Backspace","Delete","Insert","Home","End","PgUp","PgDn","Up","Down","Left","Right"
     ,"F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"]
 
@@ -172,10 +174,21 @@ ProcessMacros() {
     }
 }
 
-KeyNameFor(label) {
-    if (label = "Backtick (`)")
-        return "`"
-    if (label = "Backslash (\\)")
-        return "\\"
-    return label
+KeySequenceFor(label) {
+    static shifted := Map(
+        "< (Shift+,)", "+{,}", "> (Shift+.)", "+{.}", "? (Shift+/)", "+{/}",
+        ": (Shift+;)", "+{;}", "Double quote (Shift+')", "+{' }",
+        "{ (Shift+[)", "+{[}", "} (Shift+])", "+{]}", "| (Shift+Backslash)", "+{\\}",
+        "~ (Shift+Backtick)", "+{``}", "_ (Shift+-)", "+{-}", "+ (Shift+=)", "+{=}",
+        ") (Shift+0)", "+{0}", "( (Shift+9)", "+{9}", "* (Shift+8)", "+{8}",
+        "& (Shift+7)", "+{7}", "^ (Shift+6)", "+{6}", "% (Shift+5)", "+{5}",
+        "$ (Shift+4)", "+{4}", "# (Shift+3)", "+{3}", "@ (Shift+2)", "+{2}", "! (Shift+1)", "+{1}"
+    )
+    if shifted.Has(label)
+        return shifted[label]
+    if (label = "Backtick key")
+        return "{``}"
+    if (label = "Backslash key")
+        return "{\\}"
+    return "{" label "}"
 }
