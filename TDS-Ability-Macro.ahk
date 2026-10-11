@@ -59,9 +59,12 @@ AddField(*) {
     rowIndex := macroRows.Length + 1
     y := 156 + (rowIndex - 1) * 42
     row := {}
+    ; Give input controls dark text on their light native backgrounds.
+    mainGui.SetFont("s9 c202030", "Segoe UI")
     row.key := mainGui.AddDropDownList("x20 y" y " w145 Choose17", keyOptions)
     row.interval := mainGui.AddEdit("x180 y" y " w80 h25", "5")
     row.unit := mainGui.AddDropDownList("x270 y" y " w140 Choose1", ["Seconds", "Milliseconds"])
+    mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
     row.remove := mainGui.AddButton("x420 y" y " w80 h25", "Remove")
     row.remove.OnEvent("Click", (*) => RemoveField(row))
     row.intervalMs := 5000
