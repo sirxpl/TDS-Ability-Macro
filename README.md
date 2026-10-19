@@ -9,7 +9,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 
 ## Run
 
-1. Download the repository ZIP and extract the entire folder, keeping the `src` folder beside the launcher.
+1. Download the repository ZIP and extract the entire folder, keeping the `src` and `pictures` folders beside the launcher.
 2. Double-click `TDS-Ability-Macro.ahk`.
 3. In **Timed Abilities**, set a **Trigger Hotkey**, the **Ability Key / SendInput sequence**, and an interval for each row. Press a trigger once to start that row repeating; press it again to pause that row.
 4. Use **Hold-to-Spam Keys** for keys that repeat only while you physically hold the configured key; releasing the key stops repeats.
@@ -19,12 +19,13 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 
 ## Project layout
 
-- `TDS-Ability-Macro.ahk` — launcher and dashboard tabs.
+- `TDS-Ability-Macro.ahk` — launcher and dashboard tabs; embeds the TDS icon when compiled with Ahk2Exe.
 - `src/FieldUI.ahk` — row controls and independent scrolling for each tab.
 - `src/MacroEngine.ahk` — scheduling, validation, and key dispatch.
 - `src/Profiles.ahk` — INI profile save/load for both sections.
 - `src/Credits.ahk` — separate Credits / About window and GitHub repository link.
 - `src/WindowIcon.ahk` — browse uploader for changing the running window icon.
+- `pictures/TDS-icon.ico` — default window icon and compiled executable icon.
 - `pictures/xpl.png` and `pictures/chatgpt.png` — optional circular profile pictures for the Credits window.
 - `profiles/` — created automatically when saving or loading profiles.
 
@@ -40,7 +41,16 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - Profile save/load stores both sections and can import profiles from the previous single-list version.
 - Live status and total key-press counter.
 - **F6** toggles start/stop; **F8** exits.
-- Use **Browse Icon...** to choose an `.ico`, `.png`, `.jpg`, `.jpeg`, or `.bmp` image and change the running window icon. Drag-and-drop is disabled. This does not modify the compiled EXE, and the selected icon is for the current run only.
+- The TDS icon is applied to the running window/taskbar when `pictures/TDS-icon.ico` is present.
+- Use **Browse Icon...** to choose an `.ico`, `.png`, `.jpg`, `.jpeg`, or `.bmp` image and change the running window icon. This affects the current run only; the compiled EXE's icon is set at compile time.
+
+## Compile to EXE
+
+1. Install AutoHotkey v2 and open **Ahk2Exe**.
+2. Select `TDS-Ability-Macro.ahk` as the source file.
+3. Choose an output filename ending in `.exe`.
+4. Keep `pictures/TDS-icon.ico` in the same folder structure as the script while compiling. The `;@Ahk2Exe-SetMainIcon pictures\TDS-icon.ico` directive sets the executable's icon.
+5. Compile. Check the resulting EXE in File Explorer; Windows may cache old icons, so refresh or reopen the folder if needed.
 
 ## Notes
 
