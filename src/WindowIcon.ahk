@@ -2,14 +2,6 @@
 ; Supports ICO directly and PNG/JPG/JPEG/BMP through Windows GDI+.
 ; This changes only the current window icon; it does not modify the compiled EXE.
 
-HandleIconDrop(guiObj, ctrlObj, fileArray) {
-    if !IsObject(fileArray) || fileArray.Length < 1 {
-        SetIconStatus("No image file was received.")
-        return
-    }
-    ApplyWindowIconFile(fileArray[1])
-}
-
 BrowseWindowIcon(*) {
     selectedFile := FileSelect(1, , "Choose an image for the app window icon", "Icon and image files (*.ico;*.png;*.jpg;*.jpeg;*.bmp)")
     if selectedFile != ""
