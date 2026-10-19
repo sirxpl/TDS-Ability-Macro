@@ -1,6 +1,6 @@
 ; Runtime window-icon uploader for TDS Macro Studio.
 ; Supports ICO directly and PNG/JPG/JPEG/BMP through Windows GDI+.
-; This changes only the current window icon; it does not modify the compiled EXE.
+; This changes the current window icon; the compiled EXE icon is set at compile time.
 
 BrowseWindowIcon(*) {
     selectedFile := FileSelect(1, , "Choose an image for the app window icon", "Icon and image files (*.ico;*.png;*.jpg;*.jpeg;*.bmp)")
@@ -25,9 +25,18 @@ ApplyWindowIconFile(path) {
 
     hIcon := 0
     if extension = "ico" {
-        try hIcon := LoadPicture(path, "Icon1")
+        ; Ask LoadPicture for the handle type. Without ImageType, AHK may
+        ; return a bitmap handle, which is not valid for WM_SETICON.
+        imageType := 0
+        try hIcon := LoadPicture(path, "Icon1", &imageType)
         catch {
             SetIconStatus("Could not load that ICO file.")
+            return
+        }
+        if (imageType != 1) {
+            if hIcon
+                DllCall("DeleteObject", "Ptr", hIcon)
+            SetIconStatus("Could not load a valid icon from that ICO file.")
             return
         }
     } else {
