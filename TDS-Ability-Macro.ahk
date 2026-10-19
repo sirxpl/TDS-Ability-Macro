@@ -46,6 +46,7 @@ mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
 mainGui.AddText("x245 y149 w175 h20", "Key / SendInput")
 mainGui.AddText("x430 y149 w80 h20", "Interval")
 mainGui.AddText("x520 y149 w140 h20", "Time unit")
+mainGui.AddText("x665 y149 w60 h20", "Hold")
 
 addButton := mainGui.AddButton("x190 y430 w140 h34", "+ Add Ability")
 scrollUpButton := mainGui.AddButton("x350 y430 w65 h34", "↑ Up")
