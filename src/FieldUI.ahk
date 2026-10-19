@@ -16,9 +16,10 @@ AddField(*) {
     }
     sectionTabs.UseTab(1)
     row := {}
+    defaultTrigger := "F" (macroRows.Length + 1)
     mainGui.SetFont("s9 c202030", "Segoe UI")
     row.enabled := mainGui.AddCheckBox("x205 y196 w40 h27 Checked", "On")
-    row.trigger := mainGui.AddEdit("x250 y196 w100 h27", "F1")
+    row.trigger := mainGui.AddEdit("x250 y196 w100 h27", defaultTrigger)
     row.key := mainGui.AddEdit("x360 y196 w100 h27", "q")
     row.interval := mainGui.AddEdit("x470 y196 w70 h27", "5")
     row.unit := mainGui.AddDropDownList("x550 y196 w105 Choose1", ["Seconds", "Milliseconds"])
