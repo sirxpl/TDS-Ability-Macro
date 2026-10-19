@@ -1,6 +1,6 @@
 # TDS Macro Studio
 
-A configurable AutoHotkey v2 desktop macro for repeating keyboard actions. The project keeps its original timed-key workflow and adds per-ability enable toggles, profile save/load, duplicate-key warnings, and a roomier dark interface.
+A configurable AutoHotkey v2 desktop macro with separate sections for timed abilities and hold-to-spam keys.
 
 ## Requirements
 
@@ -9,27 +9,43 @@ A configurable AutoHotkey v2 desktop macro for repeating keyboard actions. The p
 
 ## Run
 
-1. Download `TDS-Ability-Macro.ahk`.
-2. Double-click it to open **TDS Macro Studio**.
-3. Set each ability's key or SendInput sequence, interval, and time unit.
-4. Leave **On** checked for abilities you want active.
-5. Click **Start All**. Click **Stop All** or press **F6** to stop/restart the macro.
-6. Use **Save Profile** and **Load Profile** to store and restore loadouts in INI files.
+1. Download the repository ZIP and extract the entire folder, keeping the `src` folder beside the launcher.
+2. Double-click `TDS-Ability-Macro.ahk`.
+3. In **Timed Abilities**, set a **Trigger Hotkey**, the **Ability Key / SendInput sequence**, and an interval for each row. Press a trigger once to start that row repeating; press it again to pause that row.
+4. Use **Hold-to-Spam Keys** for keys that repeat only while you physically hold the configured key; releasing the key stops repeats.
+5. Select a tab and use **Add to Section** to add a row to that section.
+6. Use **Start All**, **Stop All**, or **F6** to control enabled rows. **F8** exits.
+7. Use **Save Profile** and **Load Profile** to store both sections in the automatically created `profiles` folder.
+
+## Project layout
+
+- `TDS-Ability-Macro.ahk` — launcher and dashboard tabs.
+- `src/FieldUI.ahk` — row controls and independent scrolling for each tab.
+- `src/MacroEngine.ahk` — scheduling, validation, and key dispatch.
+- `src/Profiles.ahk` — INI profile save/load for both sections.
+- `src/Credits.ahk` — separate Credits / About window and GitHub repository link.
+- `pictures/xpl.png` and `pictures/chatgpt.png` — optional circular profile pictures for the Credits window.
+- `profiles/` — created automatically when saving or loading profiles.
 
 ## Features
 
-- Up to 8 independent ability rows.
-- Custom key input, symbols, and SendInput sequences such as `{F1}`.
-- Seconds (0.1–3600) or milliseconds (10–3,600,000).
-- Enable or disable each row without removing it.
-- Duplicate-key warning before starting.
-- Save/load profiles, including keys, intervals, units, and enabled state.
-- Add/remove abilities and scroll the list with the mouse wheel or Up/Down buttons.
-- Live running status and total key-press counter.
+- Separate **Timed Abilities** and **Hold-to-Spam Keys** sections.
+- Up to 8 rows in each section.
+- Timed rows have independent configurable trigger hotkeys (for example `F1`, `^e` for Ctrl+E, or `!q` for Alt+Q), output keys / SendInput sequences such as `{F1}`, and repeat intervals. Press each trigger to toggle only its own timer.
+- Enabled timed trigger hotkeys must be unique and must not conflict with reserved shortcuts such as F6 (start/stop) and F8 (exit).
+- Hold rows support letters, numbers, F1-F12, Space, Enter, Tab, Escape, Backspace, Delete, Insert, Home/End, Page Up/Down, and arrow keys.
+- Intervals in seconds (0.1-3600) or milliseconds (10-3,600,000).
+- Per-row enable toggles, add/remove controls, and independent scrolling.
+- Profile save/load stores both sections and can import profiles from the previous single-list version.
+- Live status and total key-press counter.
 - **F6** toggles start/stop; **F8** exits.
 
 ## Notes
 
-Keyboard input is sent to whichever window is active when a timer fires, so focus the intended application before starting. Very short intervals are subject to Windows and AutoHotkey scheduling. Test with a harmless key first and use automation only where allowed by the game and platform rules.
+Keyboard input is sent to whichever window is active when a timer fires, so focus the intended application before starting. Start All registers the configured timed trigger hotkeys; it does not immediately activate every timed row. Very short intervals are subject to Windows and AutoHotkey scheduling. Test with a harmless key first and use automation only where allowed by the game and platform rules.
 
-The interface uses native AutoHotkey controls. This release is a first dashboard/profile pass; it has not been runtime-tested on your Windows machine yet, so please test starting/stopping and profile save/load before relying on it.
+The interface uses native AutoHotkey controls. This redesign has not been runtime-tested on your Windows machine yet.
+
+## Credits pictures
+
+The **Credits / About** button opens a separate window with cards for `xpl` and ChatGPT plus a button linking to the GitHub repository. Add your own portraits as `pictures/xpl.png` and `pictures/chatgpt.png`. For a circular avatar effect, use square PNGs with the area outside the circle transparent; the app uses a simple fallback initial when an image is missing. Keep the `pictures` folder beside the launcher and `src` folder.
