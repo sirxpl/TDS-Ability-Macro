@@ -87,7 +87,7 @@ AddHoldField()
 mainGui.Show("w860 h600")
 
 ; Apply the bundled project icon automatically when it is present.
-defaultIconPath := A_ScriptDir "\\pictures\\TDS-icon.png"
+defaultIconPath := A_ScriptDir "\pictures\TDS-icon.png"
 if FileExist(defaultIconPath)
     ApplyWindowIconFile(defaultIconPath)
 
