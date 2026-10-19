@@ -71,8 +71,10 @@ mainGui.AddText("x190 y505 w650 h24", "Timed: press a trigger hotkey to toggle i
 
 profileSaveButton := mainGui.AddButton("x15 y390 w135 h34", "Save Profile")
 profileLoadButton := mainGui.AddButton("x15 y434 w135 h34", "Load Profile")
+creditsButton := mainGui.AddButton("x15 y478 w135 h34", "Credits / About")
 profileSaveButton.OnEvent("Click", SaveProfile)
 profileLoadButton.OnEvent("Click", LoadProfile)
+creditsButton.OnEvent("Click", ShowCredits)
 
 AddField()
 AddHoldField()
