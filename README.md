@@ -9,12 +9,22 @@ A configurable AutoHotkey v2 desktop macro for repeating keyboard actions. The p
 
 ## Run
 
-1. Download `TDS-Ability-Macro.ahk`.
-2. Double-click it to open **TDS Macro Studio**.
+1. Download the repository as a ZIP and extract the entire folder (keep the `src` folder beside the launcher).
+2. Double-click `TDS-Ability-Macro.ahk` to open **TDS Macro Studio**.
 3. Set each ability's key or SendInput sequence, interval, and time unit.
 4. Leave **On** checked for abilities you want active.
 5. Click **Start All**. Click **Stop All** or press **F6** to stop/restart the macro.
-6. Use **Save Profile** and **Load Profile** to store and restore loadouts in INI files.
+6. Use **Save Profile** and **Load Profile** to store and restore loadouts in the automatically created `profiles` folder.
+
+## Project layout
+
+- `TDS-Ability-Macro.ahk` — launcher and dashboard setup.
+- `src/FieldUI.ahk` — ability rows, layout, and scrolling.
+- `src/MacroEngine.ahk` — timer scheduling, key validation, and key dispatch.
+- `src/Profiles.ahk` — INI profile save/load.
+- `profiles/` — created automatically when saving or loading profiles.
+
+Keep the launcher and `src` folder together; the launcher includes the module files at startup.
 
 ## Features
 
