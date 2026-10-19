@@ -21,6 +21,8 @@ SaveProfile(*) {
 }
 
 WriteProfileRow(row, path, section) {
+    if row.HasOwnProp("trigger")
+        IniWrite(row.trigger.Value, path, section, "Trigger")
     IniWrite(row.key.Value, path, section, "Key")
     IniWrite(row.interval.Value, path, section, "Interval")
     IniWrite(row.unit.Text, path, section, "Unit")
@@ -106,6 +108,8 @@ LoadProfile(*) {
 }
 
 LoadProfileRow(row, path, section) {
+    if row.HasOwnProp("trigger")
+        row.trigger.Value := IniRead(path, section, "Trigger", row.trigger.Value)
     row.key.Value := IniRead(path, section, "Key", "q")
     row.interval.Value := IniRead(path, section, "Interval", "5")
     unitText := IniRead(path, section, "Unit", "Seconds")
