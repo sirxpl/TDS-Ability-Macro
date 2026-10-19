@@ -2,7 +2,9 @@
 
 SaveProfile(*) {
     global macroRows
-    path := FileSelect("S16", A_ScriptDir "\TDS-profile.ini", "Save TDS profile", "INI files (*.ini)")
+    profileDir := A_ScriptDir "\profiles"
+    DirCreate(profileDir)
+    path := FileSelect("S16", profileDir "\TDS-profile.ini", "Save TDS profile", "INI files (*.ini)")
     if (path = "")
         return
     if !RegExMatch(path, "i)\.ini$")
@@ -20,7 +22,9 @@ SaveProfile(*) {
 
 LoadProfile(*) {
     global macroRows, fieldScroll
-    path := FileSelect("1", A_ScriptDir, "Load TDS profile", "INI files (*.ini)")
+    profileDir := A_ScriptDir "\profiles"
+    DirCreate(profileDir)
+    path := FileSelect("1", profileDir, "Load TDS profile", "INI files (*.ini)")
     if (path = "")
         return
     StopMacro()
