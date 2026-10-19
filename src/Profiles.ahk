@@ -119,6 +119,8 @@ LoadProfileRow(row, path, section) {
 
 HideProfileRow(row) {
     row.enabled.Visible := false
+    if row.HasOwnProp("trigger")
+        row.trigger.Visible := false
     row.key.Visible := false
     row.interval.Visible := false
     row.unit.Visible := false
