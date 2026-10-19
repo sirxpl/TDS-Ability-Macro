@@ -85,8 +85,7 @@ profileSaveButton.OnEvent("Click", SaveProfile)
 profileLoadButton.OnEvent("Click", LoadProfile)
 creditsButton.OnEvent("Click", ShowCredits)
 
-iconDropArea := mainGui.AddText("x190 y540 w460 h34 Border Center +0x200", "Choose an image file to change the running window icon")
-browseIconButton := mainGui.AddButton("x665 y540 w130 h34", "Browse Icon...")
+browseIconButton := mainGui.AddButton("x190 y540 w130 h34", "Browse Icon...")
 iconStatusText := mainGui.AddText("x190 y577 w650 h18", "Window icon: default TDS icon")
 browseIconButton.OnEvent("Click", BrowseWindowIcon)
 
