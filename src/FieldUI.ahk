@@ -12,12 +12,12 @@ AddField(*) {
     y := 156
     ; Editable key field: accepts a key name, symbol, or SendInput sequence.
     mainGui.SetFont("s9 c202030", "Segoe UI")
-    row.enabled := mainGui.AddCheckBox("x190 y168 w50 h27 Checked", "On")
-    row.key := mainGui.AddEdit("x250 y168 w145 h27", "q")
-    row.interval := mainGui.AddEdit("x410 y168 w80 h27", "5")
-    row.unit := mainGui.AddDropDownList("x500 y168 w140 Choose1", ["Seconds", "Milliseconds"])
+    row.enabled := mainGui.AddCheckBox("x190 y168 w45 h27 Checked", "On")
+    row.key := mainGui.AddEdit("x245 y168 w175 h27", "q")
+    row.interval := mainGui.AddEdit("x430 y168 w80 h27", "5")
+    row.unit := mainGui.AddDropDownList("x520 y168 w140 Choose1", ["Seconds", "Milliseconds"])
     mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-    row.remove := mainGui.AddButton("x650 y168 w90 h25", "Remove")
+    row.remove := mainGui.AddButton("x675 y168 w110 h25", "Remove")
     row.remove.OnEvent("Click", (*) => RemoveField(row))
     row.intervalMs := 5000
     row.nextTick := 0
@@ -53,11 +53,11 @@ RefreshLayout() {
         slot := index - 1 - fieldScroll
         if (slot >= 0 && slot < visibleRows) {
             y := 156 + slot * 42
-            row.enabled.Move(190, y, 50, 27)
-            row.key.Move(250, y, 145, 27)
-            row.interval.Move(410, y, 80, 27)
-            row.unit.Move(500, y, 140, 27)
-            row.remove.Move(650, y, 90, 27)
+            row.enabled.Move(190, y, 45, 27)
+            row.key.Move(245, y, 175, 27)
+            row.interval.Move(430, y, 80, 27)
+            row.unit.Move(520, y, 140, 27)
+            row.remove.Move(675, y, 110, 27)
             row.enabled.Visible := true
             row.key.Visible := true
             row.interval.Visible := true
