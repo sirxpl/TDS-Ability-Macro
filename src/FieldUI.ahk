@@ -18,14 +18,18 @@ AddField(*) {
     row := {}
     mainGui.SetFont("s9 c202030", "Segoe UI")
     row.enabled := mainGui.AddCheckBox("x205 y196 w40 h27 Checked", "On")
-    row.key := mainGui.AddEdit("x250 y196 w170 h27", "q")
-    row.interval := mainGui.AddEdit("x430 y196 w80 h27", "5")
-    row.unit := mainGui.AddDropDownList("x520 y196 w135 Choose1", ["Seconds", "Milliseconds"])
+    row.trigger := mainGui.AddEdit("x250 y196 w100 h27", "F1")
+    row.key := mainGui.AddEdit("x360 y196 w100 h27", "q")
+    row.interval := mainGui.AddEdit("x470 y196 w70 h27", "5")
+    row.unit := mainGui.AddDropDownList("x550 y196 w105 Choose1", ["Seconds", "Milliseconds"])
     mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
     row.remove := mainGui.AddButton("x665 y196 w135 h27", "Remove")
     row.remove.OnEvent("Click", (*) => RemoveField(row, false))
     row.intervalMs := 5000
     row.nextTick := 0
+    row.active := false
+    row.hotkeyRegistered := false
+    row.registeredTrigger := ""
     macroRows.Push(row)
     sectionTabs.UseTab()
     RefreshLayout(false)
@@ -55,15 +59,22 @@ AddHoldField(*) {
 }
 
 RemoveField(rowToRemove, isHold, *) {
-    global macroRows, holdRows
+    global macroRows, holdRows, running
     rows := isHold ? holdRows : macroRows
     if (rows.Length <= 1) {
         MsgBox("Keep at least one row in each section.", "Cannot remove", "Icon!")
         return
     }
+    if (!isHold && running && rowToRemove.hotkeyRegistered) {
+        try Hotkey(rowToRemove.registeredTrigger, "Off")
+        rowToRemove.hotkeyRegistered := false
+        rowToRemove.active := false
+    }
     for index, row in rows {
         if (row = rowToRemove) {
             row.enabled.Visible := false
+            if row.HasOwnProp("trigger")
+                row.trigger.Visible := false
             row.key.Visible := false
             row.interval.Visible := false
             row.unit.Visible := false
@@ -92,17 +103,23 @@ RefreshLayout(isHold := false) {
         if (slot >= 0 && slot < visibleRows) {
             y := baseY + slot * 35
             row.enabled.Move(205, y, 40, 27)
-            row.key.Move(250, y, 170, 27)
-            row.interval.Move(430, y, 80, 27)
-            row.unit.Move(520, y, 135, 27)
+            if !isHold
+                row.trigger.Move(250, y, 100, 27)
+            row.key.Move(isHold ? 250 : 360, y, isHold ? 170 : 100, 27)
+            row.interval.Move(isHold ? 430 : 470, y, isHold ? 80 : 70, 27)
+            row.unit.Move(isHold ? 520 : 550, y, isHold ? 135 : 105, 27)
             row.remove.Move(665, y, 135, 27)
             row.enabled.Visible := true
+            if !isHold
+                row.trigger.Visible := true
             row.key.Visible := true
             row.interval.Visible := true
             row.unit.Visible := true
             row.remove.Visible := true
         } else {
             row.enabled.Visible := false
+            if row.HasOwnProp("trigger")
+                row.trigger.Visible := false
             row.key.Visible := false
             row.interval.Visible := false
             row.unit.Visible := false
