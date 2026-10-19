@@ -252,8 +252,7 @@ ProcessMacros() {
 
 SaveProfile(*) {
     global macroRows
-    path := FileSelect("S16", A_ScriptDir "\TDS-profile.ini", "Save TDS profile", "INI files (*.ini)")
-    if (path = "")
+        path := FileSelect("S16", A_ScriptDir . "\TDS-profile.ini", "Save TDS profile", "INI files (*.ini)")    if (path = "")
         return
     if !RegExMatch(path, "i)\.ini$")
         path .= ".ini"
