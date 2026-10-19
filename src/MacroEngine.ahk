@@ -19,6 +19,10 @@ StartMacro(*) {
         if (intervalMs = 0)
             return
         normalizedTrigger := StrLower(trigger)
+        if (normalizedTrigger = "f6" || normalizedTrigger = "f8") {
+            MsgBox("F6 and F8 are reserved for Start/Stop and Exit. Choose another trigger hotkey.", "Reserved hotkey", "Icon!")
+            return
+        }
         if seenTriggers.Has(normalizedTrigger) {
             MsgBox("Each enabled timed ability needs a unique trigger hotkey. Duplicate: " trigger, "Duplicate trigger", "Icon!")
             return
