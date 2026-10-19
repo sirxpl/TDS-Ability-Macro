@@ -6,6 +6,7 @@
 ; Use only where permitted by the game/platform rules.
 
 running := false
+currentWindowIcon := 0
 tickCount := 0
 macroRows := []
 holdRows := []
@@ -13,7 +14,7 @@ fieldScroll := 0
 holdScroll := 0
 visibleRows := 5
 
-mainGui := Gui("+MinSize860x600", "TDS Macro Studio")
+mainGui := Gui("+MinSize860x600 +E0x10", "TDS Macro Studio")
 mainGui.BackColor := "1E1E2E"
 mainGui.AddText("x0 y0 w165 h600 Background181825", "")
 mainGui.SetFont("s13 cB4Befe Bold", "Segoe UI")
@@ -76,6 +77,12 @@ profileSaveButton.OnEvent("Click", SaveProfile)
 profileLoadButton.OnEvent("Click", LoadProfile)
 creditsButton.OnEvent("Click", ShowCredits)
 
+iconDropArea := mainGui.AddText("x190 y540 w460 h34 Border Center +0x200", "Drop ICO / PNG / JPG / BMP here to change the window icon")
+browseIconButton := mainGui.AddButton("x665 y540 w130 h34", "Browse Icon...")
+iconStatusText := mainGui.AddText("x190 y577 w650 h18", "Window icon: default (this only changes the running window)")
+browseIconButton.OnEvent("Click", BrowseWindowIcon)
+mainGui.OnEvent("DropFiles", HandleIconDrop)
+
 AddField()
 AddHoldField()
 mainGui.Show("w860 h600")
@@ -98,3 +105,4 @@ HandleMouseWheel(wParam, lParam, msg, hwnd) {
 #Include src\MacroEngine.ahk
 #Include src\Profiles.ahk
 #Include src\Credits.ahk
+#Include src\WindowIcon.ahk
