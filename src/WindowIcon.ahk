@@ -2,8 +2,6 @@
 ; Supports ICO directly and PNG/JPG/JPEG/BMP through Windows GDI+.
 ; This changes only the current window icon; it does not modify the compiled EXE.
 
-currentWindowIcon := 0
-
 HandleIconDrop(guiObj, ctrlObj, fileArray) {
     if !IsObject(fileArray) || fileArray.Length < 1 {
         SetIconStatus("No image file was received.")
