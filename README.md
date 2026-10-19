@@ -23,6 +23,8 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - `src/FieldUI.ahk` — row controls and independent scrolling for each tab.
 - `src/MacroEngine.ahk` — scheduling, validation, and key dispatch.
 - `src/Profiles.ahk` — INI profile save/load for both sections.
+- `src/Credits.ahk` — separate Credits / About window and GitHub repository link.
+- `pictures/xpl.png` and `pictures/chatgpt.png` — optional circular profile pictures for the Credits window.
 - `profiles/` — created automatically when saving or loading profiles.
 
 ## Features
@@ -43,3 +45,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 Keyboard input is sent to whichever window is active when a timer fires, so focus the intended application before starting. Start All registers the configured timed trigger hotkeys; it does not immediately activate every timed row. Very short intervals are subject to Windows and AutoHotkey scheduling. Test with a harmless key first and use automation only where allowed by the game and platform rules.
 
 The interface uses native AutoHotkey controls. This redesign has not been runtime-tested on your Windows machine yet.
+
+## Credits pictures
+
+The **Credits / About** button opens a separate window with cards for `xpl` and ChatGPT plus a button linking to the GitHub repository. Add your own portraits as `pictures/xpl.png` and `pictures/chatgpt.png`. For a circular avatar effect, use square PNGs with the area outside the circle transparent; the app uses a simple fallback initial when an image is missing. Keep the `pictures` folder beside the launcher and `src` folder.
