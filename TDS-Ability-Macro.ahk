@@ -242,7 +242,7 @@ ProcessMacros() {
     now := A_TickCount
     for index, row in macroRows {
         if (row.enabled.Value && now >= row.nextTick) {
-            SendInput(row.key.Value)
+            SendInput(KeySequenceFor(row.key.Value))
             tickCount += 1
             tickText.Text := "Key presses: " tickCount
             row.nextTick := now + row.intervalMs
@@ -252,7 +252,8 @@ ProcessMacros() {
 
 SaveProfile(*) {
     global macroRows
-        path := FileSelect("S16", A_ScriptDir . "\TDS-profile.ini", "Save TDS profile", "INI files (*.ini)")    if (path = "")
+    path := FileSelect("S16", A_ScriptDir . "\TDS-profile.ini", "Save TDS profile", "INI files (*.ini)")
+    if (path = "")
         return
     if !RegExMatch(path, "i)\.ini$")
         path .= ".ini"
@@ -317,5 +318,7 @@ KeySequenceFor(label) {
         return "{``}"
     if (label = "Backslash key")
         return "{\\}"
+    if (RegExMatch(label, "^[a-zA-Z0-9]$"))
+        return label
     return "{" label "}"
 }
