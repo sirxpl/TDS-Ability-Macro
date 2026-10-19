@@ -1,5 +1,7 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
+; Embed the TDS icon into compiled executables when using Ahk2Exe.
+;@Ahk2Exe-SetMainIcon pictures\TDS-icon.ico
 
 ; TDS Macro Studio - timed abilities and dedicated hold-to-spam keys.
 ; F6: Start/stop all enabled actions. F8: Exit.
@@ -23,12 +25,12 @@ mainGui.SetFont("s8 cB8C0D9", "Segoe UI")
 mainGui.AddText("x18 y54 w130 h22", "MACRO STUDIO")
 mainGui.AddText("x18 y105 w130 h20", "WORKSPACE")
 mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-mainGui.AddText("x18 y133 w130 h44", "Ability\nscheduler")
+mainGui.AddText("x18 y133 w130 h44", "Ability`n scheduler")
 mainGui.SetFont("s8 cB8C0D9", "Segoe UI")
 mainGui.AddText("x18 y220 w130 h20", "QUICK KEYS")
 mainGui.AddText("x18 y247 w130 h20", "F6  Start / Stop")
 mainGui.AddText("x18 y270 w130 h20", "F8  Exit")
-mainGui.AddText("x18 y318 w130 h38", "Timed abilities and\nhold keys are separate.")
+mainGui.AddText("x18 y318 w130 h38", "Timed abilities and`n hold keys are separate.")
 mainGui.SetFont("s10 cF0F0F0", "Segoe UI")
 mainGui.AddText("x190 y24 w650 h32 +0x200", "TDS MACRO STUDIO")
 mainGui.SetFont("s9 cB8C0D9", "Segoe UI")
@@ -79,17 +81,19 @@ creditsButton.OnEvent("Click", ShowCredits)
 
 iconDropArea := mainGui.AddText("x190 y540 w460 h34 Border Center +0x200", "Choose an image file to change the running window icon")
 browseIconButton := mainGui.AddButton("x665 y540 w130 h34", "Browse Icon...")
-iconStatusText := mainGui.AddText("x190 y577 w650 h18", "Window icon: default (this only changes the running window)")
+iconStatusText := mainGui.AddText("x190 y577 w650 h18", "Window icon: default TDS icon")
 browseIconButton.OnEvent("Click", BrowseWindowIcon)
 
 AddField()
 AddHoldField()
-mainGui.Show("w860 h600")
 
-; Apply the bundled TDS icon to the running window/taskbar when available.
-defaultIconPath := A_ScriptDir "\pictures\TDS-icon.png"
+; Set the default icon before showing the window, so the title bar and taskbar
+; receive the TDS icon as the GUI is created.
+defaultIconPath := A_ScriptDir "\pictures\TDS-icon.ico"
 if FileExist(defaultIconPath)
     ApplyWindowIconFile(defaultIconPath)
+
+mainGui.Show("w860 h600")
 
 F6::ToggleMacro()
 F8::ExitApp
