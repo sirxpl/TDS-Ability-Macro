@@ -97,3 +97,4 @@ HandleMouseWheel(wParam, lParam, msg, hwnd) {
 #Include src\FieldUI.ahk
 #Include src\MacroEngine.ahk
 #Include src\Profiles.ahk
+#Include src\Credits.ahk
