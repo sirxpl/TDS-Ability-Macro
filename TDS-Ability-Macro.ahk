@@ -16,6 +16,12 @@ fieldScroll := 0
 holdScroll := 0
 visibleRows := 5
 
+defaultIconPath := A_ScriptDir "\\pictures\\TDS-icon.ico"
+; AutoHotkey initializes a GUI window icon from the current tray icon, so set
+; the tray icon BEFORE creating the GUI (then WM_SETICON is applied after Show).
+if FileExist(defaultIconPath)
+    TraySetIcon(defaultIconPath)
+
 mainGui := Gui("+MinSize860x600", "TDS Macro Studio")
 mainGui.BackColor := "1E1E2E"
 mainGui.AddText("x0 y0 w165 h600 Background181825", "")
