@@ -96,7 +96,6 @@ AddHoldField()
 ; Show the GUI first so Windows has created its HWND before WM_SETICON is sent.
 mainGui.Show("w860 h600")
 
-defaultIconPath := A_ScriptDir "\pictures\TDS-icon.ico"
 if FileExist(defaultIconPath)
     ApplyWindowIconFile(defaultIconPath)
 else
