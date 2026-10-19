@@ -24,7 +24,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - `src/MacroEngine.ahk` — scheduling, validation, and key dispatch.
 - `src/Profiles.ahk` — INI profile save/load for both sections.
 - `src/Credits.ahk` — separate Credits / About window and GitHub repository link.
-- `src/WindowIcon.ahk` — drag-and-drop / browse uploader for changing the running window icon.
+- `src/WindowIcon.ahk` — browse uploader for changing the running window icon.
 - `pictures/xpl.png` and `pictures/chatgpt.png` — optional circular profile pictures for the Credits window.
 - `profiles/` — created automatically when saving or loading profiles.
 
@@ -40,7 +40,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - Profile save/load stores both sections and can import profiles from the previous single-list version.
 - Live status and total key-press counter.
 - **F6** toggles start/stop; **F8** exits.
-- Drag an `.ico`, `.png`, `.jpg`, `.jpeg`, or `.bmp` file onto the main window, or use **Browse Icon...**, to change the running window icon. This does not modify the compiled EXE, and the selected icon is for the current run only.
+- Use **Browse Icon...** to choose an `.ico`, `.png`, `.jpg`, `.jpeg`, or `.bmp` image and change the running window icon. Drag-and-drop is disabled. This does not modify the compiled EXE, and the selected icon is for the current run only.
 
 ## Notes
 
