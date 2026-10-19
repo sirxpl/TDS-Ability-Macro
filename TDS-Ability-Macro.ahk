@@ -87,13 +87,14 @@ browseIconButton.OnEvent("Click", BrowseWindowIcon)
 AddField()
 AddHoldField()
 
-; Set the default icon before showing the window, so the title bar and taskbar
-; receive the TDS icon as the GUI is created.
+; Show the GUI first so Windows has created its HWND before WM_SETICON is sent.
+mainGui.Show("w860 h600")
+
 defaultIconPath := A_ScriptDir "\pictures\TDS-icon.ico"
 if FileExist(defaultIconPath)
     ApplyWindowIconFile(defaultIconPath)
-
-mainGui.Show("w860 h600")
+else
+    iconStatusText.Text := "TDS icon not found: pictures\TDS-icon.ico"
 
 F6::ToggleMacro()
 F8::ExitApp
