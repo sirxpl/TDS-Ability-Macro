@@ -16,8 +16,9 @@ AddField(*) {
     row.key := mainGui.AddEdit("x245 y176 w175 h27", "q")
     row.interval := mainGui.AddEdit("x430 y176 w80 h27", "5")
     row.unit := mainGui.AddDropDownList("x520 y176 w140 Choose1", ["Seconds", "Milliseconds"])
+    row.hold := mainGui.AddCheckBox("x665 y176 w60 h27", "Hold")
     mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
-    row.remove := mainGui.AddButton("x675 y176 w110 h27", "Remove")
+    row.remove := mainGui.AddButton("x735 y176 w60 h27", "Remove")
     row.remove.OnEvent("Click", (*) => RemoveField(row))
     row.intervalMs := 5000
     row.nextTick := 0
@@ -37,6 +38,7 @@ RemoveField(rowToRemove, *) {
             row.key.Visible := false
             row.interval.Visible := false
             row.unit.Visible := false
+            row.hold.Visible := false
             row.remove.Visible := false
             macroRows.RemoveAt(index)
             break
@@ -57,11 +59,13 @@ RefreshLayout() {
             row.key.Move(245, y, 175, 27)
             row.interval.Move(430, y, 80, 27)
             row.unit.Move(520, y, 140, 27)
-            row.remove.Move(675, y, 110, 27)
+            row.hold.Move(665, y, 60, 27)
+            row.remove.Move(735, y, 60, 27)
             row.enabled.Visible := true
             row.key.Visible := true
             row.interval.Visible := true
             row.unit.Visible := true
+            row.hold.Visible := true
             row.remove.Visible := true
         } else {
             row.enabled.Visible := false
