@@ -6,6 +6,7 @@
 ; Use only where permitted by the game/platform rules.
 
 running := false
+currentWindowIcon := 0
 tickCount := 0
 macroRows := []
 holdRows := []
