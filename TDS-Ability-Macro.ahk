@@ -86,6 +86,11 @@ AddField()
 AddHoldField()
 mainGui.Show("w860 h600")
 
+; Apply the bundled TDS icon to the running window/taskbar when available.
+defaultIconPath := A_ScriptDir "\pictures\TDS-icon.png"
+if FileExist(defaultIconPath)
+    ApplyWindowIconFile(defaultIconPath)
+
 F6::ToggleMacro()
 F8::ExitApp
 
