@@ -1,19 +1,35 @@
-# TDS Ability Macro
+# TDS Macro Studio
 
-A small AutoHotkey v2 project for prototyping timed keyboard actions.
+A configurable AutoHotkey v2 desktop macro for repeating keyboard actions. The project keeps its original timed-key workflow and adds per-ability enable toggles, profile save/load, duplicate-key warnings, and a roomier dark interface.
 
-## GUI: multiple repeating-key fields
+## Requirements
 
-1. Install **AutoHotkey v2**.
-2. Download [TDS-Ability-Macro.ahk](TDS-Ability-Macro.ahk) and double-click it to launch the desktop window.
-3. Use each row's **Hotkey** dropdown to choose a key, enter an interval, and choose **Seconds** or **Milliseconds**.
-   - Seconds: **0.1 to 3600** (decimals supported, e.g. 0.5).
-   - Milliseconds: **10 to 3,600,000** (e.g. 250 for a quarter second).
-4. Click **+ Add Fields** to add up to 8 rows. Each row repeats its own selected key independently.
-5. The key dropdown includes letters, numbers, common punctuation and shifted symbols such as backtick, backslash, <, >, ?, :, double quote, braces, pipe, tilde, underscore, plus, parentheses, and other number-row symbols.
-6. Click **Start All** to start every row, or **Stop All** / **F6** to stop or restart. Press **F8** to exit.
+- Windows
+- [AutoHotkey v2](https://www.autohotkey.com/)
 
-The window displays the total number of key presses. Focus the intended application before starting because input goes to whichever window is active when a timer fires.
+## Run
 
-Very short timer intervals can be affected by Windows and AutoHotkey scheduling. Use automation only where allowed by the game and platform rules, and test with a harmless key first.
+1. Download `TDS-Ability-Macro.ahk`.
+2. Double-click it to open **TDS Macro Studio**.
+3. Set each ability's key or SendInput sequence, interval, and time unit.
+4. Leave **On** checked for abilities you want active.
+5. Click **Start All**. Click **Stop All** or press **F6** to stop/restart the macro.
+6. Use **Save Profile** and **Load Profile** to store and restore loadouts in INI files.
 
+## Features
+
+- Up to 8 independent ability rows.
+- Custom key input, symbols, and SendInput sequences such as `{F1}`.
+- Seconds (0.1–3600) or milliseconds (10–3,600,000).
+- Enable or disable each row without removing it.
+- Duplicate-key warning before starting.
+- Save/load profiles, including keys, intervals, units, and enabled state.
+- Add/remove abilities and scroll the list with the mouse wheel or Up/Down buttons.
+- Live running status and total key-press counter.
+- **F6** toggles start/stop; **F8** exits.
+
+## Notes
+
+Keyboard input is sent to whichever window is active when a timer fires, so focus the intended application before starting. Very short intervals are subject to Windows and AutoHotkey scheduling. Test with a harmless key first and use automation only where allowed by the game and platform rules.
+
+The interface uses native AutoHotkey controls. This release is a first dashboard/profile pass; it has not been runtime-tested on your Windows machine yet, so please test starting/stopping and profile save/load before relying on it.
