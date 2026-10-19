@@ -1,29 +1,32 @@
 ; Scheduling and key dispatch for timed abilities and hold-to-spam keys.
+; Timed rows are individually toggled by their configured trigger hotkeys.
 
 StartMacro(*) {
     global running, macroRows, holdRows, statusText, tickCount, tickText
     enabledCount := 0
-    seenKeys := Map()
-    duplicateFound := false
+    seenTriggers := Map()
 
     for _, row in macroRows {
+        row.active := false
         if !row.enabled.Value
             continue
-        if (Trim(row.key.Value) = "") {
-            MsgBox("Timed ability: enter a key or SendInput sequence.", "Missing key", "Icon!")
+        trigger := Trim(row.trigger.Value)
+        if (trigger = "" || Trim(row.key.Value) = "") {
+            MsgBox("Timed ability: enter both a trigger hotkey and an ability key / SendInput sequence.", "Missing input", "Icon!")
             return
         }
         intervalMs := ValidateInterval(row, false)
         if (intervalMs = 0)
             return
+        normalizedTrigger := StrLower(trigger)
+        if seenTriggers.Has(normalizedTrigger) {
+            MsgBox("Each enabled timed ability needs a unique trigger hotkey. Duplicate: " trigger, "Duplicate trigger", "Icon!")
+            return
+        }
+        seenTriggers[normalizedTrigger] := true
         row.intervalMs := intervalMs
-        row.nextTick := A_TickCount
+        row.nextTick := 0
         enabledCount += 1
-        normalizedKey := "timed:" StrLower(Trim(row.key.Value))
-        if seenKeys.Has(normalizedKey)
-            duplicateFound := true
-        else
-            seenKeys[normalizedKey] := true
     }
 
     for _, row in holdRows {
@@ -39,25 +42,55 @@ StartMacro(*) {
         row.intervalMs := intervalMs
         row.nextTick := A_TickCount
         enabledCount += 1
-        normalizedKey := "hold:" StrLower(Trim(row.key.Value))
-        if seenKeys.Has(normalizedKey)
-            duplicateFound := true
-        else
-            seenKeys[normalizedKey] := true
     }
 
     if (enabledCount = 0) {
         MsgBox("Enable at least one timed ability or hold key before starting.", "Nothing enabled", "Icon!")
         return
     }
-    if duplicateFound && (MsgBox("Two or more enabled rows use the same key in the same section. Start anyway?", "Duplicate keys", "YesNo Icon!") = "No")
-        return
 
     tickCount := 0
     tickText.Text := "Key presses: 0"
     running := true
-    statusText.Text := "Status: RUNNING — enabled actions active"
+
+    try {
+        for _, row in macroRows {
+            if !row.enabled.Value
+                continue
+            trigger := Trim(row.trigger.Value)
+            callback := CreateTimedCallback(row)
+            Hotkey(trigger, callback, "On")
+            row.hotkeyRegistered := true
+            row.registeredTrigger := trigger
+            row.triggerCallback := callback
+        }
+    } catch as err {
+        for _, row in macroRows {
+            if row.hotkeyRegistered {
+                try Hotkey(row.registeredTrigger, "Off")
+                row.hotkeyRegistered := false
+            }
+        }
+        running := false
+        MsgBox("Couldn't register a trigger hotkey. Check its spelling and make sure it doesn't conflict with F6/F8 or another active hotkey.\`n\`n" err.Message, "Invalid trigger hotkey", "Icon!")
+        return
+    }
+
+    statusText.Text := "Status: RUNNING — press a timed trigger to toggle its timer"
     SetTimer(ProcessMacros, 10)
+}
+
+CreateTimedCallback(row) {
+    return (*) => ToggleTimedRow(row)
+}
+
+ToggleTimedRow(row) {
+    global running, statusText
+    if (!running || !row.enabled.Value)
+        return
+    row.active := !row.active
+    row.nextTick := A_TickCount
+    statusText.Text := "Status: RUNNING — " Trim(row.trigger.Value) (row.active ? " active" : " paused")
 }
 
 ValidateInterval(row, isHold) {
@@ -82,9 +115,16 @@ ValidateInterval(row, isHold) {
 }
 
 StopMacro(*) {
-    global running, statusText
+    global running, statusText, macroRows
     running := false
     SetTimer(ProcessMacros, 0)
+    for _, row in macroRows {
+        if row.hotkeyRegistered {
+            try Hotkey(row.registeredTrigger, "Off")
+            row.hotkeyRegistered := false
+        }
+        row.active := false
+    }
     statusText.Text := "Status: STOPPED"
 }
 
@@ -103,7 +143,7 @@ ProcessMacros() {
     now := A_TickCount
 
     for _, row in macroRows {
-        if !row.enabled.Value || now < row.nextTick
+        if (!row.enabled.Value || !row.active || now < row.nextTick)
             continue
         SendInput(row.key.Value)
         tickCount += 1
