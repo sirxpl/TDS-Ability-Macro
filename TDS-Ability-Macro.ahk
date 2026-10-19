@@ -16,7 +16,7 @@ fieldScroll := 0
 holdScroll := 0
 visibleRows := 5
 
-defaultIconPath := A_ScriptDir "\\pictures\\TDS-icon.ico"
+defaultIconPath := A_ScriptDir "\pictures\TDS-icon.ico"
 ; AutoHotkey initializes a GUI window icon from the current tray icon, so set
 ; the tray icon BEFORE creating the GUI (then WM_SETICON is applied after Show).
 if FileExist(defaultIconPath)
