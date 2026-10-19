@@ -16,6 +16,7 @@ SaveProfile(*) {
         IniWrite(row.interval.Value, path, section, "Interval")
         IniWrite(row.unit.Text, path, section, "Unit")
         IniWrite(row.enabled.Value, path, section, "Enabled")
+        IniWrite(row.hold.Value, path, section, "Hold")
     }
     MsgBox("Profile saved successfully.", "TDS Macro Studio", "Iconi")
 }
@@ -38,6 +39,7 @@ LoadProfile(*) {
         oldRow.key.Visible := false
         oldRow.interval.Visible := false
         oldRow.unit.Visible := false
+        oldRow.hold.Visible := false
         oldRow.remove.Visible := false
     }
     macroRows := []
@@ -51,6 +53,7 @@ LoadProfile(*) {
         unitText := IniRead(path, section, "Unit", "Seconds")
         row.unit.Value := (unitText = "Milliseconds" ? 2 : 1)
         row.enabled.Value := Integer(IniRead(path, section, "Enabled", "1"))
+        row.hold.Value := Integer(IniRead(path, section, "Hold", "0"))
     }
     RefreshLayout()
     MsgBox("Profile loaded successfully.", "TDS Macro Studio", "Iconi")
