@@ -9,6 +9,10 @@ StartMacro(*) {
             MsgBox("Field " index ": type a key or SendInput sequence.", "Missing key", "Icon!")
             return
         }
+        if row.hold.Value && (PhysicalKeyFor(row.key.Value) = "") {
+            MsgBox("Field " index ": Hold mode supports letters, numbers, function keys, and standard named keys (Space, Enter, arrows, etc.). Turn Hold off to use symbols or SendInput sequences.", "Unsupported Hold key", "Icon!")
+            return
+        }
         intervalText := Trim(row.interval.Value)
         if !RegExMatch(intervalText, "^\d+(?:\.\d+)?$") {
             MsgBox("Field " index ": enter a valid interval number.", "Invalid interval", "Icon!")
@@ -28,7 +32,7 @@ StartMacro(*) {
             }
             row.intervalMs := Round(intervalValue)
         }
-        row.nextTick := A_TickCount + row.intervalMs
+        row.nextTick := A_TickCount
     }
     enabledCount := 0
     seenKeys := Map()
@@ -37,7 +41,7 @@ StartMacro(*) {
         if !row.enabled.Value
             continue
         enabledCount += 1
-        normalizedKey := StrLower(Trim(row.key.Value))
+        normalizedKey := StrLower(Trim(row.key.Value)) ":" row.hold.Value
         if seenKeys.Has(normalizedKey)
             duplicateFound := true
         else
@@ -47,7 +51,7 @@ StartMacro(*) {
         MsgBox("Enable at least one ability before starting.", "Nothing enabled", "Icon!")
         return
     }
-    if duplicateFound && (MsgBox("Two or more enabled abilities use the same key. Start anyway?", "Duplicate keybinds", "YesNo Icon!") = "No")
+    if duplicateFound && (MsgBox("Two or more enabled abilities use the same key and mode. Start anyway?", "Duplicate keybinds", "YesNo Icon!") = "No")
         return
     tickCount := 0
     tickText.Text := "Key presses: 0"
@@ -77,13 +81,42 @@ ProcessMacros() {
         return
     now := A_TickCount
     for index, row in macroRows {
-        if (row.enabled.Value && now >= row.nextTick) {
+        if !row.enabled.Value
+            continue
+        if row.hold.Value {
+            physicalKey := PhysicalKeyFor(row.key.Value)
+            if (physicalKey = "" || !GetKeyState(physicalKey, "P")) {
+                row.nextTick := now
+                continue
+            }
+            if (now < row.nextTick)
+                continue
+            SendInput("{" physicalKey "}")
+        } else {
+            if (now < row.nextTick)
+                continue
             SendInput(row.key.Value)
-            tickCount += 1
-            tickText.Text := "Key presses: " tickCount
-            row.nextTick := now + row.intervalMs
         }
+        tickCount += 1
+        tickText.Text := "Key presses: " tickCount
+        row.nextTick := now + row.intervalMs
     }
+}
+
+PhysicalKeyFor(label) {
+    label := Trim(label)
+    lower := StrLower(label)
+    if RegExMatch(lower, "^[a-z0-9]$")
+        return lower
+    if RegExMatch(label, "i)^F(?:[1-9]|1[0-2])$")
+        return label
+    static named := Map(
+        "Space", "Space", "Enter", "Enter", "Tab", "Tab", "Escape", "Escape",
+        "Backspace", "Backspace", "Delete", "Delete", "Insert", "Insert",
+        "Home", "Home", "End", "End", "PgUp", "PgUp", "PgDn", "PgDn",
+        "Up", "Up", "Down", "Down", "Left", "Left", "Right", "Right"
+    )
+    return named.Has(label) ? named[label] : ""
 }
 
 KeySequenceFor(label) {
