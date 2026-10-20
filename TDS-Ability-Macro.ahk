@@ -103,6 +103,8 @@ if FileExist(defaultIconPath)
 else
     iconStatusText.Text := "TDS icon not found: pictures\TDS-icon.ico"
 
+#Include src\StrategyWindow.ahk
+
 F6::ToggleMacro()
 F8::ExitApp
 
@@ -122,4 +124,3 @@ HandleMouseWheel(wParam, lParam, msg, hwnd) {
 #Include src\Profiles.ahk
 #Include src\Credits.ahk
 #Include src\WindowIcon.ahk
-#Include src\StrategyWindow.ahk
