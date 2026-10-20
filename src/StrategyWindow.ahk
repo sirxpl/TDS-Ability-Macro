@@ -42,7 +42,8 @@ ShowStrategyWindow(initialUrl := "") {
     strategyGui.AddText("x16 y12 w850 h26", "PINNED STRATEGY")
     strategyGui.SetFont("s9 cB8C0D9", "Segoe UI")
     strategyGui.AddText("x16 y40 w850 h20", "Paste a Google Docs, Sheets, or Slides link. The preview is displayed inside this window.")
-    strategyUrlEdit := strategyGui.AddEdit("x16 y66 w540 h28", initialUrl)
+    ; Dark input with bright text keeps pasted strategy URLs easy to read.
+    strategyUrlEdit := strategyGui.AddEdit("x16 y66 w540 h28 Background28283A cFFFFFF", initialUrl)
     loadButton := strategyGui.AddButton("x566 y64 w112 h32", "Load Preview")
     saveButton := strategyGui.AddButton("x686 y64 w92 h32", "Save Link")
     browserButton := strategyGui.AddButton("x786 y64 w112 h32", "Open Browser")
