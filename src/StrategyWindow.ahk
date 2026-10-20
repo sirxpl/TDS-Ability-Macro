@@ -72,9 +72,9 @@ ShowStrategyWindow(initialUrl := "") {
         if !DirExist(dataDir)
             DirCreate(dataDir)
         strategyStatusText.Text := "Starting embedded browser..."
-        WebView2.CreateControllerAsync(strategyWebHost.Hwnd, 0, dataDir, "", loaderPath)
-            .then((controller) => StrategyWebViewReady(controller))
-            .catch((err) => StrategyWebViewFailed(err))
+        webViewPromise := WebView2.CreateControllerAsync(strategyWebHost.Hwnd, 0, dataDir, "", loaderPath)
+        webViewPromise.then((controller) => StrategyWebViewReady(controller))
+        webViewPromise.catch((err) => StrategyWebViewFailed(err))
     } catch as err {
         StrategyWebViewFailed(err)
     }
