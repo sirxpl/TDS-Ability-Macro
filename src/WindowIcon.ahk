@@ -66,19 +66,19 @@ CreateIconFromImage(path) {
     si := Buffer(A_PtrSize = 8 ? 24 : 16, 0)
     NumPut("UInt", 1, si, 0)
     token := 0
-    if DllCall("gdiplusGdiplusStartup", "Ptr*", &token, "Ptr", si, "Ptr", 0, "UInt") != 0
+    if DllCall("gdiplus\GdiplusStartup", "Ptr*", &token, "Ptr", si, "Ptr", 0, "UInt") != 0
         return 0
 
     bitmap := 0
     hIcon := 0
     try {
-        if DllCall("gdiplusGdipCreateBitmapFromFile", "WStr", path, "Ptr*", &bitmap, "UInt") = 0 {
-            if DllCall("gdiplusGdipCreateHICONFromBitmap", "Ptr", bitmap, "Ptr*", &hIcon, "UInt") != 0
+        if DllCall("gdiplus\GdipCreateBitmapFromFile", "WStr", path, "Ptr*", &bitmap, "UInt") = 0 {
+            if DllCall("gdiplus\GdipCreateHICONFromBitmap", "Ptr", bitmap, "Ptr*", &hIcon, "UInt") != 0
                 hIcon := 0
-            DllCall("gdiplusGdipDisposeImage", "Ptr", bitmap, "UInt")
+            DllCall("gdiplus\GdipDisposeImage", "Ptr", bitmap, "UInt")
         }
     } finally {
-        DllCall("gdiplusGdiplusShutdown", "Ptr", token)
+        DllCall("gdiplus\GdiplusShutdown", "Ptr", token)
     }
     return hIcon
 }
