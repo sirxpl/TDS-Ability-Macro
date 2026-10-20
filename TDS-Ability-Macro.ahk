@@ -100,9 +100,9 @@ mainGui.Show("w860 h600")
 
 if FileExist(defaultIconPath)
     ApplyWindowIconFile(defaultIconPath)
-else
-    iconStatusText.Text := "TDS icon not found: pictures\TDS-icon.ico"
+; Missing icon is non-fatal; the UI no longer has an icon status label.
 
+#Include lib\WebView2\WebView2.ahk
 #Include src\StrategyWindow.ahk
 
 F6::ToggleMacro()
