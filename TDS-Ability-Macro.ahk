@@ -78,6 +78,12 @@ mainGui.SetFont("s8 cB8C0D9", "Segoe UI")
 mainGui.AddText("x190 y482 w650 h20", "F6 = start / stop all    •    F8 = quit    •    Use Up/Down or the mouse wheel to scroll")
 mainGui.AddText("x190 y505 w650 h24", "Timed: press a trigger hotkey to toggle its repeating ability. Use automation only where permitted.")
 
+mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
+mainGui.AddText("x190 y540 w105 h24", "Pinned Strategy")
+strategyLinkEdit := mainGui.AddEdit("x300 y536 w360 h28", "")
+pinStrategyButton := mainGui.AddButton("x670 y534 w125 h32", "Pin Strategy")
+pinStrategyButton.OnEvent("Click", PinStrategyFromMain)
+
 profileSaveButton := mainGui.AddButton("x15 y390 w135 h34", "Save Profile")
 profileLoadButton := mainGui.AddButton("x15 y434 w135 h34", "Load Profile")
 creditsButton := mainGui.AddButton("x15 y478 w135 h34", "Credits / About")
@@ -116,3 +122,4 @@ HandleMouseWheel(wParam, lParam, msg, hwnd) {
 #Include src\Profiles.ahk
 #Include src\Credits.ahk
 #Include src\WindowIcon.ahk
+#Include src\StrategyWindow.ahk
