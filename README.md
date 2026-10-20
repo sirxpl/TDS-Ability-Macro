@@ -24,7 +24,8 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - `src/MacroEngine.ahk` — scheduling, validation, and key dispatch.
 - `src/Profiles.ahk` — INI profile save/load for both sections.
 - `src/Credits.ahk` — separate Credits / About window and GitHub repository link.
-- `src/StrategyWindow.ahk` — always-on-top strategy helper that saves a Google Docs, Sheets, or Slides preview link.
+- `src/StrategyWindow.ahk` — always-on-top strategy helper with an embedded WebView2 preview and saved Google Docs, Sheets, or Slides link.
+- `lib/WebView2/WebView2.ahk`, `lib/Promise.ahk`, and `lib/ComVar.ahk` — WebView2 AutoHotkey wrapper and its dependencies.
 - `src/WindowIcon.ahk` — applies the bundled TDS window icon.
 - `pictures/TDS-icon.ico` — default window icon and compiled executable icon.
 - `pictures/xpl.png` and `pictures/chatgpt.png` — optional circular profile pictures for the Credits window.
@@ -43,7 +44,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - Live status and total key-press counter.
 - **F6** toggles start/stop; **F8** exits.
 - The TDS icon is applied to the running window/taskbar when `pictures/TDS-icon.ico` is present.
-- **Pinned Strategy** accepts a Google Docs, Sheets, or Slides URL, saves the preview URL in `strategy.ini`, and opens it in the default browser. Editing URLs are normalized to `/preview`.
+- **Pinned Strategy** embeds a Google Docs, Sheets, or Slides preview in an always-on-top, resizable window. It remembers the last URL in `strategy.ini`, with an **Open Browser** fallback. Editing URLs are normalized to `/preview`.
 
 ## Compile to EXE
 
@@ -57,7 +58,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 
 Keyboard input is sent to whichever window is active when a timer fires, so focus the intended application before starting. Start All registers the configured timed trigger hotkeys; it does not immediately activate every timed row. Very short intervals are subject to Windows and AutoHotkey scheduling. Test with a harmless key first and use automation only where allowed by the game and platform rules.
 
-The interface uses native AutoHotkey controls. The pinned strategy helper stays on top, but Google Docs content currently opens in your default browser rather than being embedded inside the helper; Google sharing permissions still apply. This redesign has not been runtime-tested on your Windows machine yet.
+The strategy viewer uses Microsoft Edge WebView2. The WebView2 Runtime is built into most Windows 11 installations; if it is missing, install the Evergreen Runtime from [Microsoft's WebView2 page](https://developer.microsoft.com/en-us/microsoft-edge/webview2/). The native loader DLL must also be present: obtain the `Microsoft.Web.WebView2` NuGet package and copy `runtimes/win-x64/native/WebView2Loader.dll` to `lib/64bit/WebView2Loader.dll` for 64-bit AutoHotkey, or the matching `win-x86` DLL to `lib/32bit/WebView2Loader.dll` for 32-bit AutoHotkey. The wrapper source is from [thqby/ahk2_lib](https://github.com/thqby/ahk2_lib) and includes its Promise and COM variant dependencies. Google sharing permissions still apply, and some documents may require Google to permit preview embedding. This integration has not been runtime-tested on your Windows machine yet.
 
 ## Credits pictures
 
