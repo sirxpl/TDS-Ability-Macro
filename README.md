@@ -24,7 +24,8 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - `src/MacroEngine.ahk` — scheduling, validation, and key dispatch.
 - `src/Profiles.ahk` — INI profile save/load for both sections.
 - `src/Credits.ahk` — separate Credits / About window and GitHub repository link.
-- `src/WindowIcon.ahk` — browse uploader for changing the running window icon.
+- `src/StrategyWindow.ahk` — always-on-top strategy helper that saves a Google Docs, Sheets, or Slides preview link.
+- `src/WindowIcon.ahk` — applies the bundled TDS window icon.
 - `pictures/TDS-icon.ico` — default window icon and compiled executable icon.
 - `pictures/xpl.png` and `pictures/chatgpt.png` — optional circular profile pictures for the Credits window.
 - `profiles/` — created automatically when saving or loading profiles.
@@ -42,7 +43,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - Live status and total key-press counter.
 - **F6** toggles start/stop; **F8** exits.
 - The TDS icon is applied to the running window/taskbar when `pictures/TDS-icon.ico` is present.
-- Use **Browse Icon...** to choose an `.ico`, `.png`, `.jpg`, `.jpeg`, or `.bmp` image and change the running window icon. This affects the current run only; the compiled EXE's icon is set at compile time.
+- **Pinned Strategy** accepts a Google Docs, Sheets, or Slides URL, saves the preview URL in `strategy.ini`, and opens it in the default browser. Editing URLs are normalized to `/preview`.
 
 ## Compile to EXE
 
@@ -56,7 +57,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 
 Keyboard input is sent to whichever window is active when a timer fires, so focus the intended application before starting. Start All registers the configured timed trigger hotkeys; it does not immediately activate every timed row. Very short intervals are subject to Windows and AutoHotkey scheduling. Test with a harmless key first and use automation only where allowed by the game and platform rules.
 
-The interface uses native AutoHotkey controls. This redesign has not been runtime-tested on your Windows machine yet.
+The interface uses native AutoHotkey controls. The pinned strategy helper stays on top, but Google Docs content currently opens in your default browser rather than being embedded inside the helper; Google sharing permissions still apply. This redesign has not been runtime-tested on your Windows machine yet.
 
 ## Credits pictures
 
