@@ -80,7 +80,8 @@ mainGui.AddText("x190 y505 w650 h24", "Timed: press a trigger hotkey to toggle i
 
 mainGui.SetFont("s9 cF0F0F0", "Segoe UI")
 mainGui.AddText("x190 y540 w105 h24", "Pinned Strategy")
-strategyLinkEdit := mainGui.AddEdit("x300 y536 w360 h28", "")
+; Darker input background and bright text make the paste-link field easier to spot.
+strategyLinkEdit := mainGui.AddEdit("x300 y536 w360 h28 Background28283A cFFFFFF", "")
 pinStrategyButton := mainGui.AddButton("x670 y534 w125 h32", "Pin Strategy")
 pinStrategyButton.OnEvent("Click", PinStrategyFromMain)
 
