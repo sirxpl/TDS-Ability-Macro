@@ -27,7 +27,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - `src/StrategyWindow.ahk` — always-on-top strategy helper with an embedded WebView2 preview and saved Google Docs, Sheets, or Slides link.
 - `lib/WebView2/WebView2.ahk`, `lib/Promise.ahk`, and `lib/ComVar.ahk` — WebView2 AutoHotkey wrapper and its dependencies.
 - `src/WindowIcon.ahk` — applies the bundled TDS window icon.
-- `src/GameDetection.ahk` — Roblox window detection and optional user-provided image-template matching for map/mode labels.
+- `src/GameDetection.ahk` — Roblox window detection, optional user-provided image-template matching, and manual map/mode/player overrides.
 - `pictures/TDS-icon.ico` — default window icon and compiled executable icon.
 - `pictures/xpl.png` and `pictures/chatgpt.png` — optional circular profile pictures for the Credits window.
 - `profiles/` — created automatically when saving or loading profiles.
@@ -66,7 +66,7 @@ The strategy viewer uses Microsoft Edge WebView2. The WebView2 Runtime is built 
 - The optional Rich Presence module attempts to connect to the local Discord desktop client when the macro app opens, and refreshes the activity while the app stays open. It does not control or start Roblox itself.
 - Create an application in the [Discord Developer Portal](https://discord.com/developers/applications) and set its application name to **Tower Defense Simulator** if you want that exact name shown on the activity card. Copy its **Application ID** into `discord-rpc.ini` under `[DiscordRPC]` as `ApplicationId=YOUR_APPLICATION_ID` (replace the example with the numeric ID; do not include quotes).
 - Keep Discord Desktop open and enable activity sharing in Discord settings. If Discord is closed, the RPC connection is unavailable; the macro itself should continue working normally.
-- The activity keeps **Tower Defense Simulator** as its details and updates its state when Roblox, a map template, or a mode template is detected. The **Game Detection** tab searches only inside the visible Roblox window. To enable image matching, add your own cropped PNG reference images to `pictures/detection/maps/` and `pictures/detection/modes/`; each filename (without `.png`) becomes the label, such as `Crossroads.png` or `Hardcore.png`. Templates work best when captured at the same window size and UI scale as the game. If no image matches, the value remains **Unknown**. No reference images are bundled, and this template matcher has not yet been runtime-tested on your PC. Rich Presence has not yet been runtime-tested on every Discord client version, so verify it locally after configuring the Application ID.
+- The activity keeps **Tower Defense Simulator** as its details and updates its state with the detected or manually supplied game information. The **Game Detection** tab checks the visible Roblox window. Optional image matching uses your own cropped PNGs in `pictures/detection/maps/` and `pictures/detection/modes/`; each filename (without `.png`) becomes the label. You can instead enter the map, gamemode, and player count in the manual fields and enable **Use manual values**. Manual values override automatic map/mode results; player count is manual-only and must be 1–4. Disabling manual values returns map/mode to automatic detection. No reference images are bundled, and detection has not yet been runtime-tested on your PC. Rich Presence has not yet been runtime-tested on every Discord client version, so verify it locally after configuring the Application ID.
 
 ## Credits pictures
 
