@@ -8,7 +8,7 @@ discordRPCEnabled := false
 
 StartDiscordPresence() {
     global discordRPCApplicationId, discordRPCEnabled
-    configPath := A_ScriptDir "\\discord-rpc.ini"
+    configPath := A_ScriptDir "\discord-rpc.ini"
     if !FileExist(configPath)
         IniWrite("", configPath, "DiscordRPC", "ApplicationId")
 
