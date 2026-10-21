@@ -60,6 +60,13 @@ Keyboard input is sent to whichever window is active when a timer fires, so focu
 
 The strategy viewer uses Microsoft Edge WebView2. The WebView2 Runtime is built into most Windows 11 installations; if it is missing, install the Evergreen Runtime from [Microsoft's WebView2 page](https://developer.microsoft.com/en-us/microsoft-edge/webview2/). The native loader DLL must also be present: download the [Microsoft.Web.WebView2 NuGet package](https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.2903.40) and extract/copy `runtimes/win-x64/native/WebView2Loader.dll` to `lib/64bit/WebView2Loader.dll` for 64-bit AutoHotkey, or the matching `win-x86` DLL to `lib/32bit/WebView2Loader.dll` for 32-bit AutoHotkey. The wrapper source is from [thqby/ahk2_lib](https://github.com/thqby/ahk2_lib) and includes its Promise and COM variant dependencies. Google sharing permissions still apply, and some documents may require Google to permit preview embedding. This integration has not been runtime-tested on your Windows machine yet.
 
+## Discord Rich Presence
+
+- The optional Rich Presence module attempts to connect to the local Discord desktop client when the macro app opens, and refreshes the activity while the app stays open. It does not control or start Roblox itself.
+- Create an application in the [Discord Developer Portal](https://discord.com/developers/applications) and set its application name to **Tower Defense Simulator** if you want that exact name shown on the activity card. Copy its **Application ID** into `discord-rpc.ini` under `[DiscordRPC]` as `ApplicationId=YOUR_APPLICATION_ID` (replace the example with the numeric ID; do not include quotes).
+- Keep Discord Desktop open and enable activity sharing in Discord settings. If Discord is closed, the RPC connection is unavailable; the macro itself should continue working normally.
+- The activity displays **Using TDS Macro Studio** and **Macro Studio Open** beneath the application name. Rich Presence has not yet been runtime-tested on every Discord client version, so verify it locally after configuring the Application ID.
+
 ## Credits pictures
 
 The **Credits / About** button opens a separate window with cards for `xpl` and ChatGPT plus a button linking to the GitHub repository. Add your own portraits as `pictures/xpl.png` and `pictures/chatgpt.png`. For a circular avatar effect, use square PNGs with the area outside the circle transparent; the app uses a simple fallback initial when an image is missing. Keep the `pictures` folder beside the launcher and `src` folder.
