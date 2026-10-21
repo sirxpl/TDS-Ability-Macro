@@ -1,10 +1,11 @@
 ; Independent TDS game-window and optional image-template detection.
-; Add your own cropped reference PNGs under:
+; Optional templates can be placed under:
 ;   pictures\detection\maps\<Map Name>.png
 ;   pictures\detection\modes\<Mode Name>.png
-; Templates are searched only inside the visible Roblox window. Matching is
-; resolution-sensitive; capture templates at the same window size when possible.
-; No map/mode is guessed when a template cannot be matched.
+; Templates are searched only inside the visible Roblox client area. They work
+; best when cropped from UI that is visible in the game and captured at the
+; same window size. A match is remembered until Roblox closes or another
+; matching template is found, so selection-screen templates can persist in-game.
 
 tdsDetectionEnabled := true
 tdsDetectedRobloxHwnd := 0
@@ -45,23 +46,24 @@ TDSGameDetectionTick(*) {
     if foundHwnd {
         tdsDetectionState := "Roblox detected"
         try {
-            if (WinGetMinMax("ahk_id " foundHwnd) != -1) {
-                WinGetPos(&winX, &winY, &winW, &winH, "ahk_id " foundHwnd)
-                if (winW > 0 && winH > 0) {
-                    tdsDetectedMap := TDSFindVisualTemplate("maps", winX, winY, winX + winW - 1, winY + winH - 1)
-                    tdsDetectedMode := TDSFindVisualTemplate("modes", winX, winY, winX + winW - 1, winY + winH - 1)
-                } else {
-                    tdsDetectedMap := "Unknown"
-                    tdsDetectedMode := "Unknown"
-                }
-            } else {
-                tdsDetectedMap := "Unknown"
-                tdsDetectedMode := "Unknown"
+            if (WinGetMinMax("ahk_id " foundHwnd) = -1) {
+                ; Keep the last known map/mode while the game is minimized.
                 tdsDetectionState := "Roblox detected (minimized)"
+            } else {
+                WinGetClientPos(&winX, &winY, &winW, &winH, "ahk_id " foundHwnd)
+                if (winW > 0 && winH > 0) {
+                    detectedMap := TDSFindVisualTemplate("maps", winX, winY, winX + winW - 1, winY + winH - 1)
+                    detectedMode := TDSFindVisualTemplate("modes", winX, winY, winX + winW - 1, winY + winH - 1)
+
+                    ; Do not erase a known result just because its UI is no longer visible.
+                    if (detectedMap != "Unknown")
+                        tdsDetectedMap := detectedMap
+                    if (detectedMode != "Unknown")
+                        tdsDetectedMode := detectedMode
+                }
             }
         } catch {
-            tdsDetectedMap := "Unknown"
-            tdsDetectedMode := "Unknown"
+            ; Keep the last known map/mode if window geometry temporarily fails.
         }
     } else {
         tdsDetectionState := "Waiting for Roblox"
@@ -86,7 +88,7 @@ TDSFindVisualTemplate(category, left, top, right, bottom) {
     if !DirExist(folder)
         return "Unknown"
 
-    ; Template filenames become the displayed labels, e.g. "Crossroads.png".
+    ; Template filenames become displayed labels, e.g. "Crossroads.png".
     Loop Files, folder "\*.png", "F" {
         try {
             foundX := 0
