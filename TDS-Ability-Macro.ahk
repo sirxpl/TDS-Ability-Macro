@@ -125,3 +125,9 @@ HandleMouseWheel(wParam, lParam, msg, hwnd) {
 #Include src\Profiles.ahk
 #Include src\Credits.ahk
 #Include src\WindowIcon.ahk
+
+#Include src\DiscordRPC.ahk
+
+; Rich Presence is optional and never blocks the macro UI if Discord is unavailable.
+StartDiscordPresence()
+OnExit(StopDiscordPresence)
