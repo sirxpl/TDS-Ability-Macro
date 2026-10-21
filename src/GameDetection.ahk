@@ -19,14 +19,22 @@ tdsManualSetupEnabled := false
 tdsManualMap := ""
 tdsManualMode := ""
 tdsManualPlayers := ""
+tdsElapsedRunning := false
+tdsElapsedStartTick := 0
+tdsElapsedAccumulatedMs := 0
+tdsElapsedLastRpcMinute := -1
+tdsElapsedDisplay := "00:00:00"
 
 StartTDSGameDetection() {
     SetTimer(TDSGameDetectionTick, 3000)
+    SetTimer(TDSUpdateElapsedTime, 1000)
     TDSGameDetectionTick()
+    TDSUpdateElapsedTime()
 }
 
 StopTDSGameDetection(*) {
     SetTimer(TDSGameDetectionTick, 0)
+    SetTimer(TDSUpdateElapsedTime, 0)
 }
 
 TDSGameDetectionTick(*) {
@@ -138,4 +146,55 @@ SaveManualGameSetup(*) {
     TDSGameDetectionTick()
     if tdsManualSetupEnabled
         tdsDetectionStatusText.Text := "Status: Manual setup enabled"
+}
+
+ToggleTDSMatchTimer(*) {
+    global tdsElapsedRunning, tdsElapsedStartTick
+    global tdsElapsedButton, tdsDetectionStatusText
+
+    if tdsElapsedRunning {
+        tdsElapsedRunning := false
+        tdsElapsedButton.Text := "▶ Start Timer"
+        tdsDetectionStatusText.Text := "Status: Elapsed timer paused"
+    } else {
+        tdsElapsedRunning := true
+        tdsElapsedStartTick := A_TickCount
+        tdsElapsedButton.Text := "Ⅱ Pause Timer"
+        tdsDetectionStatusText.Text := "Status: Elapsed timer running"
+    }
+    TDSUpdateElapsedTime()
+}
+
+ResetTDSMatchTimer(*) {
+    global tdsElapsedRunning, tdsElapsedStartTick, tdsElapsedAccumulatedMs
+    global tdsElapsedButton, tdsDetectionStatusText
+    tdsElapsedRunning := false
+    tdsElapsedStartTick := 0
+    tdsElapsedAccumulatedMs := 0
+    tdsElapsedButton.Text := "▶ Start Timer"
+    tdsDetectionStatusText.Text := "Status: Elapsed timer reset"
+    TDSUpdateElapsedTime(true)
+}
+
+TDSUpdateElapsedTime(forceRpc := false) {
+    global tdsElapsedRunning, tdsElapsedStartTick, tdsElapsedAccumulatedMs
+    global tdsElapsedLastRpcMinute, tdsElapsedDisplay, tdsElapsedText
+    elapsedMs := tdsElapsedAccumulatedMs
+    if tdsElapsedRunning
+        elapsedMs += A_TickCount - tdsElapsedStartTick
+
+    totalSeconds := Floor(elapsedMs / 1000)
+    hours := Floor(totalSeconds / 3600)
+    minutes := Floor(Mod(totalSeconds, 3600) / 60)
+    seconds := Mod(totalSeconds, 60)
+    tdsElapsedDisplay := Format("{:02}:{:02}:{:02}", hours, minutes, seconds)
+
+    if IsSet(tdsElapsedText)
+        tdsElapsedText.Text := "Elapsed Time: " tdsElapsedDisplay
+
+    rpcMinute := Floor(totalSeconds / 60)
+    if (forceRpc || rpcMinute != tdsElapsedLastRpcMinute) {
+        tdsElapsedLastRpcMinute := rpcMinute
+        try DiscordRPCSetActivity()
+    }
 }
