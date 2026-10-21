@@ -12,7 +12,7 @@ discordRPCPlaceId := "3260590327" ; TDS game place ID
 
 LoadDiscordRPCSettings() {
     global discordRPCEnableCheck, discordRPCAppEdit
-    configPath := A_ScriptDir "\\discord-rpc.ini"
+    configPath := A_ScriptDir "\discord-rpc.ini"
     enabledValue := IniRead(configPath, "DiscordRPC", "Enabled", "1")
     appId := IniRead(configPath, "DiscordRPC", "ApplicationId", "")
     discordRPCEnableCheck.Value := (enabledValue = "1")
@@ -21,10 +21,10 @@ LoadDiscordRPCSettings() {
 
 SaveDiscordRPCSettings(*) {
     global discordRPCEnableCheck, discordRPCAppEdit, discordRPCStatusText
-    configPath := A_ScriptDir "\\discord-rpc.ini"
+    configPath := A_ScriptDir "\discord-rpc.ini"
     appId := Trim(discordRPCAppEdit.Value)
 
-    if (discordRPCEnableCheck.Value && !RegExMatch(appId, "^\\d{15,22}$")) {
+    if (discordRPCEnableCheck.Value && !RegExMatch(appId, "^\d{15,22}$")) {
         discordRPCStatusText.Text := "Enter a valid numeric Application ID (15–22 digits), or disable Rich Presence."
         return
     }
