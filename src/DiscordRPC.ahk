@@ -130,10 +130,14 @@ DiscordRPCConnect() {
 
 DiscordRPCSetActivity() {
     global discordRPCApplicationId, discordRPCGameIconUrl
+    global tdsDetectedRobloxHwnd, tdsDetectedMap, tdsDetectedMode
     if !discordRPCApplicationId
         return false
 
-    activity := '"type":0,"details":"Tower Defense Simulator","state":"TDS Macro Studio Open"'
+    rpcState := "TDS Macro Studio Open"
+    if IsSet(tdsDetectedRobloxHwnd) && tdsDetectedRobloxHwnd
+        rpcState := "Roblox detected | Map: " tdsDetectedMap " | Mode: " tdsDetectedMode
+    activity := '"type":0,"details":"Tower Defense Simulator","state":"' DiscordRPCJsonEscape(rpcState) '"'
     if (discordRPCGameIconUrl != "") {
         ; Discord's media proxy URL form allows a public HTTPS image URL as an activity asset.
         externalImage := "mp:external/" DiscordRPCUrlEncode(discordRPCGameIconUrl) "/" StrReplace(StrReplace(discordRPCGameIconUrl, "https://", "https/"), "http://", "http/")
