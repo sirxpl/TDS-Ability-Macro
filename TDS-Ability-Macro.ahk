@@ -82,7 +82,7 @@ tdsDetectionStatusText := mainGui.AddText("x210 y255 w580 h26 cF0F0F0", "Status:
 tdsDetectedMapText := mainGui.AddText("x210 y286 w580 h24 cF0F0F0", "Map: Unknown")
 tdsDetectedModeText := mainGui.AddText("x210 y315 w580 h24 cF0F0F0", "Gamemode: Unknown")
 mainGui.SetFont("s8 cB8C0D9", "Segoe UI")
-mainGui.AddText("x210 y350 w580 h44", "Map and mode recognition will stay Unknown until the visual/OCR recognizer can verify them.")
+mainGui.AddText("x210 y350 w580 h44", "Optional PNG templates: pictures\\detection\\maps and pictures\\detection\\modes. Use cropped references matching your window size.")
 sectionTabs.UseTab()
 
 addButton := mainGui.AddButton("x190 y434 w140 h34", "+ Add to Section")
