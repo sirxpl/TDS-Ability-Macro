@@ -12,6 +12,13 @@ tdsDetectedRobloxHwnd := 0
 tdsDetectionState := "Waiting for Roblox"
 tdsDetectedMap := "Unknown"
 tdsDetectedMode := "Unknown"
+tdsDetectedPlayers := "Unknown"
+tdsAutoDetectedMap := "Unknown"
+tdsAutoDetectedMode := "Unknown"
+tdsManualSetupEnabled := false
+tdsManualMap := ""
+tdsManualMode := ""
+tdsManualPlayers := ""
 
 StartTDSGameDetection() {
     SetTimer(TDSGameDetectionTick, 3000)
@@ -23,8 +30,9 @@ StopTDSGameDetection(*) {
 }
 
 TDSGameDetectionTick(*) {
-    global tdsDetectedRobloxHwnd, tdsDetectionState, tdsDetectedMap, tdsDetectedMode
-    global tdsDetectionStatusText, tdsDetectedMapText, tdsDetectedModeText
+    global tdsDetectedRobloxHwnd, tdsDetectionState, tdsDetectedMap, tdsDetectedMode, tdsDetectedPlayers
+    global tdsAutoDetectedMap, tdsAutoDetectedMode, tdsManualSetupEnabled, tdsManualMap, tdsManualMode, tdsManualPlayers
+    global tdsDetectionStatusText, tdsDetectedMapText, tdsDetectedModeText, tdsDetectedPlayersText
 
     foundHwnd := 0
     try {
@@ -41,6 +49,7 @@ TDSGameDetectionTick(*) {
     oldState := tdsDetectionState
     oldMap := tdsDetectedMap
     oldMode := tdsDetectedMode
+    oldPlayers := tdsDetectedPlayers
     tdsDetectedRobloxHwnd := foundHwnd
 
     if foundHwnd {
@@ -57,9 +66,9 @@ TDSGameDetectionTick(*) {
 
                     ; Do not erase a known result just because its UI is no longer visible.
                     if (detectedMap != "Unknown")
-                        tdsDetectedMap := detectedMap
+                        tdsAutoDetectedMap := detectedMap
                     if (detectedMode != "Unknown")
-                        tdsDetectedMode := detectedMode
+                        tdsAutoDetectedMode := detectedMode
                 }
             }
         } catch {
@@ -67,18 +76,24 @@ TDSGameDetectionTick(*) {
         }
     } else {
         tdsDetectionState := "Waiting for Roblox"
-        tdsDetectedMap := "Unknown"
-        tdsDetectedMode := "Unknown"
+        tdsAutoDetectedMap := "Unknown"
+        tdsAutoDetectedMode := "Unknown"
     }
+
+    ; Manual setup overrides automatic map/mode results when enabled.
+    tdsDetectedMap := tdsManualSetupEnabled && Trim(tdsManualMap) != "" ? Trim(tdsManualMap) : tdsAutoDetectedMap
+    tdsDetectedMode := tdsManualSetupEnabled && Trim(tdsManualMode) != "" ? Trim(tdsManualMode) : tdsAutoDetectedMode
+    tdsDetectedPlayers := tdsManualSetupEnabled && Trim(tdsManualPlayers) != "" ? Trim(tdsManualPlayers) : "Unknown"
 
     if IsSet(tdsDetectionStatusText) {
         tdsDetectionStatusText.Text := "Status: " tdsDetectionState
         tdsDetectedMapText.Text := "Map: " tdsDetectedMap
         tdsDetectedModeText.Text := "Gamemode: " tdsDetectedMode
+        tdsDetectedPlayersText.Text := "Players: " tdsDetectedPlayers
     }
 
     ; Refresh RPC when the game, map, or mode status changes.
-    if (oldState != tdsDetectionState || oldMap != tdsDetectedMap || oldMode != tdsDetectedMode) {
+    if (oldState != tdsDetectionState || oldMap != tdsDetectedMap || oldMode != tdsDetectedMode || oldPlayers != tdsDetectedPlayers) {
         try DiscordRPCSetActivity()
     }
 }
@@ -100,4 +115,22 @@ TDSFindVisualTemplate(category, left, top, right, bottom) {
         }
     }
     return "Unknown"
+}
+
+SaveManualGameSetup(*) {
+    global tdsManualSetupCheck, tdsManualMapEdit, tdsManualModeEdit, tdsManualPlayersEdit
+    global tdsManualSetupEnabled, tdsManualMap, tdsManualMode, tdsManualPlayers
+    global tdsDetectionStatusText
+    tdsManualSetupEnabled := !!tdsManualSetupCheck.Value
+    tdsManualMap := Trim(tdsManualMapEdit.Value)
+    tdsManualMode := Trim(tdsManualModeEdit.Value)
+    tdsManualPlayers := Trim(tdsManualPlayersEdit.Value)
+
+    if (tdsManualPlayers != "" && !RegExMatch(tdsManualPlayers, "^([1-4])$")) {
+        tdsDetectionStatusText.Text := "Status: Players must be a number from 1 to 4."
+        return
+    }
+    TDSGameDetectionTick()
+    if tdsManualSetupEnabled
+        tdsDetectionStatusText.Text := "Status: Manual setup enabled"
 }
