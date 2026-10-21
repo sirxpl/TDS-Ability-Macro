@@ -27,6 +27,7 @@ A configurable AutoHotkey v2 desktop macro with separate sections for timed abil
 - `src/StrategyWindow.ahk` — always-on-top strategy helper with an embedded WebView2 preview and saved Google Docs, Sheets, or Slides link.
 - `lib/WebView2/WebView2.ahk`, `lib/Promise.ahk`, and `lib/ComVar.ahk` — WebView2 AutoHotkey wrapper and its dependencies.
 - `src/WindowIcon.ahk` — applies the bundled TDS window icon.
+- `src/GameDetection.ahk` — initial Roblox game-window detection and game-status reporting.
 - `pictures/TDS-icon.ico` — default window icon and compiled executable icon.
 - `pictures/xpl.png` and `pictures/chatgpt.png` — optional circular profile pictures for the Credits window.
 - `profiles/` — created automatically when saving or loading profiles.
@@ -65,7 +66,7 @@ The strategy viewer uses Microsoft Edge WebView2. The WebView2 Runtime is built 
 - The optional Rich Presence module attempts to connect to the local Discord desktop client when the macro app opens, and refreshes the activity while the app stays open. It does not control or start Roblox itself.
 - Create an application in the [Discord Developer Portal](https://discord.com/developers/applications) and set its application name to **Tower Defense Simulator** if you want that exact name shown on the activity card. Copy its **Application ID** into `discord-rpc.ini` under `[DiscordRPC]` as `ApplicationId=YOUR_APPLICATION_ID` (replace the example with the numeric ID; do not include quotes).
 - Keep Discord Desktop open and enable activity sharing in Discord settings. If Discord is closed, the RPC connection is unavailable; the macro itself should continue working normally.
-- The activity displays **Using TDS Macro Studio** and **Macro Studio Open** beneath the application name. Rich Presence has not yet been runtime-tested on every Discord client version, so verify it locally after configuring the Application ID.
+- The activity keeps **Tower Defense Simulator** as its details and updates its state when the Roblox client window is detected. The **Game Detection** tab currently reports whether a Roblox window is present; map and gamemode intentionally remain **Unknown** until a reliable visual/OCR recognizer is implemented. Rich Presence has not yet been runtime-tested on every Discord client version, so verify it locally after configuring the Application ID.
 
 ## Credits pictures
 
