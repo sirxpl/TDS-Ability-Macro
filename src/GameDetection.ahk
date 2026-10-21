@@ -149,10 +149,11 @@ SaveManualGameSetup(*) {
 }
 
 ToggleTDSMatchTimer(*) {
-    global tdsElapsedRunning, tdsElapsedStartTick
+    global tdsElapsedRunning, tdsElapsedStartTick, tdsElapsedAccumulatedMs
     global tdsElapsedButton, tdsDetectionStatusText
 
     if tdsElapsedRunning {
+        tdsElapsedAccumulatedMs += A_TickCount - tdsElapsedStartTick
         tdsElapsedRunning := false
         tdsElapsedButton.Text := "▶ Start Timer"
         tdsDetectionStatusText.Text := "Status: Elapsed timer paused"
