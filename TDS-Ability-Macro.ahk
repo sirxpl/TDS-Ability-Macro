@@ -149,7 +149,10 @@ HandleMouseWheel(wParam, lParam, msg, hwnd) {
 #Include src\WindowIcon.ahk
 
 #Include src\DiscordRPC.ahk
+#Include src\GameDetection.ahk
 
 ; Rich Presence is optional and never blocks the macro UI if Discord is unavailable.
 StartDiscordPresence()
+StartTDSGameDetection()
 OnExit(StopDiscordPresence)
+OnExit(StopTDSGameDetection)
