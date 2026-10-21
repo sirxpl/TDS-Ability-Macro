@@ -18,7 +18,7 @@ StopTDSGameDetection(*) {
 }
 
 TDSGameDetectionTick(*) {
-    global tdsDetectedRobloxHwnd, tdsDetectionState
+    global tdsDetectedRobloxHwnd, tdsDetectionState, tdsDetectedMap, tdsDetectedMode
     global tdsDetectionStatusText, tdsDetectedMapText, tdsDetectedModeText
 
     foundHwnd := 0
