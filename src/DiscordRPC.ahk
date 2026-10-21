@@ -111,7 +111,7 @@ DiscordRPCConnect() {
         return false
 
     Loop 10 {
-        pipePath := "\\\\.\\pipe\\discord-ipc-" (A_Index - 1)
+        pipePath := "\\.\pipe\discord-ipc-" (A_Index - 1)
         handle := DllCall("CreateFileW", "Str", pipePath, "UInt", 0xC0000000, "UInt", 0, "Ptr", 0, "UInt", 3, "UInt", 0, "Ptr", 0, "Ptr")
         if (handle != -1 && handle != 0) {
             discordRPCHandle := handle
@@ -160,8 +160,8 @@ DiscordRPCUrlEncode(url) {
 }
 
 DiscordRPCJsonEscape(value) {
-    value := StrReplace(value, "\\", "\\\\")
-    value := StrReplace(value, '"', '\\"')
+    value := StrReplace(value, "\", "\\")
+    value := StrReplace(value, '"', '\"')
     return value
 }
 
