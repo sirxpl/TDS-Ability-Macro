@@ -61,6 +61,10 @@ Keyboard input is sent to whichever window is active when a timer fires, so focu
 
 The strategy viewer uses Microsoft Edge WebView2. The WebView2 Runtime is built into most Windows 11 installations; if it is missing, install the Evergreen Runtime from [Microsoft's WebView2 page](https://developer.microsoft.com/en-us/microsoft-edge/webview2/). The native loader DLL must also be present: download the [Microsoft.Web.WebView2 NuGet package](https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.2903.40) and extract/copy `runtimes/win-x64/native/WebView2Loader.dll` to `lib/64bit/WebView2Loader.dll` for 64-bit AutoHotkey, or the matching `win-x86` DLL to `lib/32bit/WebView2Loader.dll` for 32-bit AutoHotkey. The wrapper source is from [thqby/ahk2_lib](https://github.com/thqby/ahk2_lib) and includes its Promise and COM variant dependencies. Google sharing permissions still apply, and some documents may require Google to permit preview embedding. This integration has not been runtime-tested on your Windows machine yet.
 
+## Experimental features notice
+
+**Discord Rich Presence and Game Detection are experimental.** They have not been fully tested across different PCs, Roblox window sizes, or Discord client versions. Automatic map/mode matching relies on optional image templates and may return `Unknown` or keep an earlier match; use the manual fields to correct the displayed details. Check the activity in Discord before relying on it.
+
 ## Discord Rich Presence
 
 - The optional Rich Presence module attempts to connect to the local Discord desktop client when the macro app opens, and refreshes the activity while the app stays open. It does not control or start Roblox itself.
