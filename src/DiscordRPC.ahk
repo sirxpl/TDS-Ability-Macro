@@ -11,12 +11,12 @@ discordRPCPlaceId := "3260590327" ; TDS game place ID
 
 StartDiscordPresence() {
     global discordRPCApplicationId, discordRPCEnabled
-    configPath := A_ScriptDir "\\discord-rpc.ini"
+    configPath := A_ScriptDir "\discord-rpc.ini"
     if !FileExist(configPath)
         IniWrite("", configPath, "DiscordRPC", "ApplicationId")
 
     discordRPCApplicationId := Trim(IniRead(configPath, "DiscordRPC", "ApplicationId", ""))
-    if !RegExMatch(discordRPCApplicationId, "^\\d{15,22}$")
+    if !RegExMatch(discordRPCApplicationId, "^\d{15,22}$")
         return
 
     discordRPCEnabled := true
@@ -60,8 +60,8 @@ DiscordRPCRefreshGameIcon(force := false) {
             return discordRPCGameIconUrl
 
         body := request.ResponseText
-        if RegExMatch(body, '"imageUrl"\\s*:\\s*"([^"]+)"', &match) {
-            newUrl := StrReplace(match[1], "\\/", "/")
+        if RegExMatch(body, '"imageUrl"\s*:\s*"([^"]+)"', &match) {
+            newUrl := StrReplace(match[1], "\/", "/")
             if InStr(newUrl, "https://") = 1
                 discordRPCGameIconUrl := newUrl
         }
