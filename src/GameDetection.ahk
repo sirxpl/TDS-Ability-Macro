@@ -121,15 +121,20 @@ SaveManualGameSetup(*) {
     global tdsManualSetupCheck, tdsManualMapEdit, tdsManualModeEdit, tdsManualPlayersEdit
     global tdsManualSetupEnabled, tdsManualMap, tdsManualMode, tdsManualPlayers
     global tdsDetectionStatusText
-    tdsManualSetupEnabled := !!tdsManualSetupCheck.Value
-    tdsManualMap := Trim(tdsManualMapEdit.Value)
-    tdsManualMode := Trim(tdsManualModeEdit.Value)
-    tdsManualPlayers := Trim(tdsManualPlayersEdit.Value)
+    nextManualEnabled := !!tdsManualSetupCheck.Value
+    nextManualMap := Trim(tdsManualMapEdit.Value)
+    nextManualMode := Trim(tdsManualModeEdit.Value)
+    nextManualPlayers := Trim(tdsManualPlayersEdit.Value)
 
-    if (tdsManualPlayers != "" && !RegExMatch(tdsManualPlayers, "^([1-4])$")) {
+    if (nextManualPlayers != "" && !RegExMatch(nextManualPlayers, "^([1-4])$")) {
         tdsDetectionStatusText.Text := "Status: Players must be a number from 1 to 4."
         return
     }
+
+    tdsManualSetupEnabled := nextManualEnabled
+    tdsManualMap := nextManualMap
+    tdsManualMode := nextManualMode
+    tdsManualPlayers := nextManualPlayers
     TDSGameDetectionTick()
     if tdsManualSetupEnabled
         tdsDetectionStatusText.Text := "Status: Manual setup enabled"
